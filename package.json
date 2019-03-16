@@ -1,0 +1,37 @@
+{
+  "name": "@mu.ts/logger",
+  "version": "1.0.0",
+  "description": "Simple and lightweight logging for FaaS implementations.",
+  "main": "dist/index.js",
+  "author": "matt.filion@gmail.com",
+  "homepage": "https://github.com/mu-ts/logger#readme",
+  "scripts": {
+    "lint": "tslint 'src/**/*.ts'",
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mu-ts/logger.git"
+  },
+  "keywords": [
+    "Logger",
+    "AWS",
+    "Lambda"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/jeremyosborne/packagejsonexample/blob/master/LICENSE.txt"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/mu-ts/logger/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^11.11.3",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.3333"
+  }
+}
