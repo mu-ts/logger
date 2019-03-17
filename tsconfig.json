@@ -3,6 +3,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "ES6",
+    "types": [
+      "node"
+    ],
     "allowJs": false,
     "strict": true,
     "alwaysStrict": true,
@@ -12,5 +15,9 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

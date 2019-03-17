@@ -1,7 +1,7 @@
 {
   "name": "@mu.ts/logger",
   "version": "1.0.0",
-  "description": "Simple and lightweight logging for FaaS implementations.",
+  "description": "Simple and lightweight logging.",
   "main": "dist/index.js",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
@@ -18,7 +18,8 @@
   "keywords": [
     "Logger",
     "AWS",
-    "Lambda"
+    "Lambda",
+    "lamlog"
   ],
   "licenses": [
     {
