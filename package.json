@@ -1,7 +1,7 @@
 {
-  "name": "@mu.ts/logger",
-  "version": "1.0.0",
-  "description": "Simple and lightweight logging.",
+  "name": "@mu-ts/logger",
+  "version": "1.0.2",
+  "description": "Simple and lightweight logging for FaaS implementations.",
   "main": "dist/index.js",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",

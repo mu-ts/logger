@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
+    "lib": ["es2017"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "ES6",
-    "types": [
-      "node"
-    ],
+    "target": "es2017",
+    "types": ["node"],
     "allowJs": false,
     "strict": true,
     "alwaysStrict": true,
@@ -14,10 +13,11 @@
     "emitDecoratorMetadata": true,
     "noImplicitAny": true,
     "removeComments": true,
-    "preserveConstEnums": true
+    "sourceMap": true,
+    "preserveConstEnums": true,
+    "outDir": "dist",
+    "rootDir": "."
   },
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
