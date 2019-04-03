@@ -3,20 +3,33 @@
   "version": "1.0.2",
   "description": "Simple and lightweight logging for FaaS implementations.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
     "lint": "tslint 'src/**/*.ts'",
     "start": "npm run build:live",
     "build": "tsc -p .",
-    "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/Logger.ts",
+    "prepare": "npm run build",
+    "pretest": "npm run build",
+    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "xtest": "nyc mocha test",
+    "codecov": "mkdir .nyc_output && nyc report --reporter=json && codecov -f coverage/*.json"
   },
+  "files": [
+    "dist/*",
+    "README.md",
+    "LICENSE",
+    "CODE_OF_CONDUCT.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mu-ts/logger.git"
   },
   "keywords": [
     "Logger",
+    "Logging",
     "AWS",
     "Lambda",
     "lamlog"
@@ -31,8 +44,18 @@
     "url": "https://github.com/mu-ts/logger/issues"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.3",
+    "chai": "^4.2.0",
+    "codecov": "^3.2.0",
+    "mocha": "^6.0.2",
+    "nyc": "^13.3.0",
+    "source-map-support": "^0.5.11",
+    "ts-node": "^8.0.3",
+    "tslint-eslint-rules": "^5.4.0",
+    "aws-sdk": "^2.430.0",
     "tslint": "^5.14.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.4000"
   }
 }

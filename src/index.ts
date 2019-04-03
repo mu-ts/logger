@@ -1,5 +1,5 @@
-import { ConsoleLogger } from "./ConsoleLogger";
-import { LogLevel, Logger } from "./Logger";
+import { ConsoleLogger } from './ConsoleLogger';
+import { LogLevel, Logger } from './Logger';
 
 /**
  * Convenience method for getting a console logger instance.

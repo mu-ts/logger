@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from "./Logger";
+import { Logger, LogLevel } from './';
 
 /**
  * Interface that defines all the core behaviors available for logging.
@@ -34,22 +34,15 @@ export class ConsoleLogger implements Logger {
   }
 
   public startTimer(label?: string): void {
-    console.time(`${name}:${label}`);
+    console.time(`${this.name}:${label}`);
   }
 
   public endTimer(label?: string): void {
-    console.timeEnd(`${name}:${label}`);
+    console.timeEnd(`${this.name}:${label}`);
   }
 
   public resetTimer(label?: string): void {
-    console.countReset(`${name}:${label}`);
-  }
-
-  /**
-   * Outputs memory information to the console.
-   */
-  public memory(): void {
-    console.memory();
+    console.countReset(`${this.name}:${label}`);
   }
 
   public child(name: string): Logger {
@@ -87,10 +80,10 @@ export class ConsoleLogger implements Logger {
    * Determines the default log level for the name provided.
    */
   private getDefaultLevel(name?: string): LogLevel {
-    let rootLevel: string | undefined = process.env['LOG_LEVEL'];
-    if (!rootLevel) return LogLevel.info;
-    let rootLevels: Array<string> = rootLevel.split(';');
-    let levelKey = rootLevel as keyof typeof LogLevel;
+    let rootLevels: string | undefined = process.env['LOG_LEVEL'];
+    if (!rootLevels) return LogLevel.info;
+    let rootLevel: Array<string> = rootLevels.split(';');
+    let levelKey = rootLevel[0] as keyof typeof LogLevel;
     return LogLevel[levelKey];
   }
 }
