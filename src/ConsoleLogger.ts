@@ -8,8 +8,7 @@ export class ConsoleLogger implements Logger {
   private name: string;
 
   constructor(name: string, level?: LogLevel) {
-    const defaultLevel: LogLevel = this.getDefaultLevel();
-    this.level = level || defaultLevel;
+    this.level = level !== undefined ? level : this.getDefaultLevel();
     this.name = name;
   }
 
@@ -17,19 +16,19 @@ export class ConsoleLogger implements Logger {
     if (condition) this.log(LogLevel.trace, message, context);
   }
 
-  public debug(message: string, context?: any, condition?: boolean): void {
+  public debug(message: string, context?: any, condition: boolean = true): void {
     if (condition) this.log(LogLevel.debug, message, context);
   }
 
-  public info(message: string, context?: any, condition?: boolean): void {
+  public info(message: string, context?: any, condition: boolean = true): void {
     if (condition) this.log(LogLevel.info, message, context);
   }
 
-  public warn(message: string, context?: any, condition?: boolean): void {
+  public warn(message: string, context?: any, condition: boolean = true): void {
     if (condition) this.log(LogLevel.warn, message, context);
   }
 
-  public error(message: string, context?: any, condition?: boolean): void {
+  public error(message: string, context?: any, condition: boolean = true): void {
     if (condition) this.log(LogLevel.error, message, context);
   }
 
@@ -60,10 +59,10 @@ export class ConsoleLogger implements Logger {
     if (this.level <= level) {
       if (level <= LogLevel.error) {
         if (context) console.error(this.format(level, message), message);
-        else context.error(this.format(level, message));
+        else console.error(this.format(level, message));
       } else {
         if (context) console.log(this.format(level, message), context);
-        else context.log(this.format(level, message));
+        else console.log(this.format(level, message));
       }
     }
   }
@@ -80,10 +79,10 @@ export class ConsoleLogger implements Logger {
    * Determines the default log level for the name provided.
    */
   private getDefaultLevel(name?: string): LogLevel {
-    let rootLevels: string | undefined = process.env['LOG_LEVEL'];
+    const rootLevels: string | undefined = process.env['LOG_LEVEL'];
     if (!rootLevels) return LogLevel.info;
-    let rootLevel: Array<string> = rootLevels.split(';');
-    let levelKey = rootLevel[0] as keyof typeof LogLevel;
+    const rootLevel: Array<string> = rootLevels.split(';');
+    const levelKey = rootLevel[0] as keyof typeof LogLevel;
     return LogLevel[levelKey];
   }
 }
