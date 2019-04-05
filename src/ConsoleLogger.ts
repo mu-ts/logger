@@ -58,7 +58,7 @@ export class ConsoleLogger implements Logger {
   private log(level: LogLevel, message: string, context?: any) {
     if (this.level <= level) {
       if (level <= LogLevel.error) {
-        if (context) console.error(this.format(level, message), message);
+        if (context) console.error(this.format(level, message), context);
         else console.error(this.format(level, message));
       } else {
         if (context) console.log(this.format(level, message), context);
