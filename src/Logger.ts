@@ -11,6 +11,12 @@ export enum LogLevel {
 
 export interface Logger {
   /**
+   *
+   * @param level of logging this logger should output, and above.
+   */
+  setLevel(level: LogLevel): void;
+
+  /**
    * Trace level logging. The most detailed level of logging.
    *
    * @param message to log.

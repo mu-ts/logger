@@ -12,6 +12,10 @@ export class ConsoleLogger implements Logger {
     this.name = name;
   }
 
+  public setLevel(level: LogLevel): void {
+    this.level = level;
+  }
+
   public trace(message: string, context?: any, condition: boolean = true): void {
     if (condition) this.log(LogLevel.trace, message, context);
   }
