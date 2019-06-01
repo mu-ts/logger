@@ -1,7 +1,7 @@
 {
   "name": "@mu-ts/logger",
-  "version": "1.1.0",
-  "description": "Simple and lightweight logging for FaaS implementations.",
+  "version": "2.0.0",
+  "description": "Logging facade over Bunyan",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "matt.filion@gmail.com",
@@ -44,18 +44,22 @@
     "url": "https://github.com/mu-ts/logger/issues"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.6",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.3",
+    "aws-sdk": "^2.430.0",
     "chai": "^4.2.0",
     "codecov": "^3.2.0",
     "mocha": "^6.0.2",
     "nyc": "^13.3.0",
     "source-map-support": "^0.5.11",
     "ts-node": "^8.0.3",
-    "tslint-eslint-rules": "^5.4.0",
-    "aws-sdk": "^2.430.0",
     "tslint": "^5.14.0",
+    "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.3.4000"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.12"
   }
 }

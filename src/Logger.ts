@@ -1,94 +1,183 @@
-/**
- * The logging levels that are avialable.
- */
-export enum LogLevel {
-  trace = 0,
-  debug = 3,
-  info = 5,
-  warn = 7,
-  error = 10,
-}
+import { LogLevelString } from 'bunyan';
 
 export interface Logger {
   /**
    *
-   * @param level of logging this logger should output, and above.
+   * @param options to set on each logger statement.
    */
-  setLevel(level: LogLevel): void;
+  child(options: { [key: string]: string }): Logger;
 
   /**
-   * Trace level logging. The most detailed level of logging.
+   * Returns a boolean: is the `trace` level enabled?
    *
-   * @param message to log.
-   * @param context to log.
-   * @param condition, that when true, will result in this statement being printed. Default is true.
+   * This is equivalent to `log.isTraceEnabled()` or `log.isEnabledFor(TRACE)` in log4j.
    */
-  trace(message: string, context?: any, condition?: boolean): void;
+  trace(): boolean;
 
   /**
-   * Debug level logging. Detailed but relavent.
-   *
-   * @param message to log.
-   * @param context to log.
-   * @param condition, that when true, will result in this statement being printed. Default is true.
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
    */
-  debug(message: string, context?: any, condition?: boolean): void;
+  trace(error: Error, ...params: any[]): void;
 
   /**
-   * Info level logging. Helpful messages or contextual information.
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
    *
-   * @param message to log.
-   * @param context to log.
-   * @param condition, that when true, will result in this statement being printed. Default is true.
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
    */
-  info(message: string, context?: any, condition?: boolean): void;
+  trace(obj: Object, ...params: any[]): void;
 
   /**
-   * Warn level logging. Something is wrong, but things are not 'broken'.
-   *
-   * @param message to log.
-   * @param context to log.
-   * @param condition, that when true, will result in this statement being printed. Default is true.
+   * Uses `util.format` for msg formatting.
    */
-  warn(message: string, context?: any, condition?: boolean): void;
+  trace(format: any, ...params: any[]): void;
 
   /**
-   * Error level logging. Its broken, and the cat is on fire!
+   * Returns a boolean: is the `debug` level enabled?
    *
-   * @param message to log.
-   * @param context to log.
-   * @param condition, that when true, will result in this statement being printed. Default is true.
+   * This is equivalent to `log.isDebugEnabled()` or `log.isEnabledFor(DEBUG)` in log4j.
    */
-  error(message: string, context?: any, condition?: boolean): void;
+  debug(): boolean;
 
   /**
-   * Starts a timer with the label provided, or a default if no label was provided.
-   *
-   * @param label of the timer.
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
    */
-  startTimer(label?: string): void;
+  debug(error: Error, ...params: any[]): void;
 
   /**
-   * Prints out the elapsed time of the label provided, or a default if no label was provided.
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
    *
-   * Requires that startTimer be executed first.
-   *
-   * @param label of the timer.
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
    */
-  endTimer(label?: string): void;
+  debug(obj: Object, ...params: any[]): void;
 
   /**
-   * Resets a timer back to undefined.
-   *
-   * @param label of the timer.
+   * Uses `util.format` for msg formatting.
    */
-  resetTimer(label?: string): void;
+  debug(format: any, ...params: any[]): void;
 
   /**
-   * Prints out a child logger, with the same settings as this logger. However,
-   * the messages will be grouped by the name provided.
+   * Returns a boolean: is the `info` level enabled?
    *
-   * @param name of the child logger.
+   * This is equivalent to `log.isInfoEnabled()` or `log.isEnabledFor(INFO)` in log4j.
    */
-  child(name: string): Logger;
+  info(): boolean;
+
+  /**
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
+   */
+  info(error: Error, ...params: any[]): void;
+
+  /**
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
+   *
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
+   */
+  info(obj: Object, ...params: any[]): void;
+
+  /**
+   * Uses `util.format` for msg formatting.
+   */
+  info(format: any, ...params: any[]): void;
+
+  /**
+   * Returns a boolean: is the `warn` level enabled?
+   *
+   * This is equivalent to `log.isWarnEnabled()` or `log.isEnabledFor(WARN)` in log4j.
+   */
+  warn(): boolean;
+
+  /**
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
+   */
+  warn(error: Error, ...params: any[]): void;
+
+  /**
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
+   *
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
+   */
+  warn(obj: Object, ...params: any[]): void;
+
+  /**
+   * Uses `util.format` for msg formatting.
+   */
+  warn(format: any, ...params: any[]): void;
+
+  /**
+   * Returns a boolean: is the `error` level enabled?
+   *
+   * This is equivalent to `log.isErrorEnabled()` or `log.isEnabledFor(ERROR)` in log4j.
+   */
+  error(): boolean;
+
+  /**
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
+   */
+  error(error: Error, ...params: any[]): void;
+
+  /**
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
+   *
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
+   */
+  error(obj: Object, ...params: any[]): void;
+
+  /**
+   * Uses `util.format` for msg formatting.
+   */
+  error(format: any, ...params: any[]): void;
+
+  /**
+   * Returns a boolean: is the `fatal` level enabled?
+   *
+   * This is equivalent to `log.isFatalEnabled()` or `log.isEnabledFor(FATAL)` in log4j.
+   */
+  fatal(): boolean;
+
+  /**
+   * Special case to log an `Error` instance to the record.
+   * This adds an `err` field with exception details
+   * (including the stack) and sets `msg` to the exception
+   * message or you can specify the `msg`.
+   */
+  fatal(error: Error, ...params: any[]): void;
+
+  /**
+   * The first field can optionally be a "fields" object, which
+   * is merged into the log record.
+   *
+   * To pass in an Error *and* other fields, use the `err`
+   * field name for the Error instance.
+   */
+  fatal(obj: Object, ...params: any[]): void;
+
+  /**
+   * Uses `util.format` for msg formatting.
+   */
+  fatal(format: any, ...params: any[]): void;
 }
