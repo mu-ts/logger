@@ -4,28 +4,6 @@ import * as Bunyan from 'bunyan';
 const bunyanLogger: Bunyan = Bunyan.createLogger({
   name: process.env['AWS_LAMBDA_FUNCTION_NAME'] || 'default',
   level: <Bunyan.LogLevelString>process.env['LOG_LEVEL'] || 'info',
-  streams: [
-    {
-      level: 'trace',
-      stream: process.stdout, // log INFO and above to stdout
-    },
-    {
-      level: 'debug',
-      stream: process.stdout, // log INFO and above to stdout
-    },
-    {
-      level: 'info',
-      stream: process.stdout, // log INFO and above to stdout
-    },
-    {
-      level: 'error',
-      stream: process.stderr, // log INFO and above to stdout
-    },
-    {
-      level: 'fatal',
-      stream: process.stderr, // log INFO and above to stdout
-    },
-  ],
 });
 
 bunyanLogger.info(
