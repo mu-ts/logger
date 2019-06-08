@@ -58,8 +58,8 @@ export function setLevel(level: Bunyan.LogLevelString): void {
  *
  * @param component to define on each child logging statement.
  */
-export function named(component: string, options?: { [key: string]: string }) {
-  return bunyanLogger.child(Object.assign(options, { component }));
+export function named(component: string, options?: { [key: string]: string }): Logger {
+  return bunyanLogger.child(Object.assign(options || {}, { component }));
 }
 
 export { Logger };
