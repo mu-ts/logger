@@ -1,7 +1,8 @@
 import { Logger } from './Logger';
+import { LogLevelString } from './LogLevelString';
 import { LoggerService } from './LoggerService';
 
-export { Logger, LoggerService };
+export { Logger, LoggerService, LogLevelString };
 
 LoggerService.defaultLogger().info(
   {
