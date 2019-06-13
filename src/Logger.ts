@@ -1,6 +1,12 @@
-import { LogLevelString } from 'bunyan';
+import { LogLevelString } from './LogLevelString';
 
 export interface Logger {
+  /**
+   *
+   * @param value to set the log level to.
+   */
+  level(value: LogLevelString): void;
+
   /**
    *
    * @param options to set on each logger statement.
@@ -20,21 +26,7 @@ export interface Logger {
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
    */
-  trace(error: Error, ...params: any[]): void;
-
-  /**
-   * The first field can optionally be a "fields" object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  trace(obj: Object, ...params: any[]): void;
-
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  trace(format: any, ...params: any[]): void;
+  trace(error: Error | Object | any, ...params: any[]): void;
 
   /**
    * Returns a boolean: is the `debug` level enabled?
@@ -49,21 +41,7 @@ export interface Logger {
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
    */
-  debug(error: Error, ...params: any[]): void;
-
-  /**
-   * The first field can optionally be a "fields" object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  debug(obj: Object, ...params: any[]): void;
-
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  debug(format: any, ...params: any[]): void;
+  debug(error: Error | Object | any, ...params: any[]): void;
 
   /**
    * Returns a boolean: is the `info` level enabled?
@@ -78,21 +56,7 @@ export interface Logger {
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
    */
-  info(error: Error, ...params: any[]): void;
-
-  /**
-   * The first field can optionally be a "fields" object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  info(obj: Object, ...params: any[]): void;
-
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  info(format: any, ...params: any[]): void;
+  info(error: Error | Object | any, ...params: any[]): void;
 
   /**
    * Returns a boolean: is the `warn` level enabled?
@@ -107,21 +71,7 @@ export interface Logger {
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
    */
-  warn(error: Error, ...params: any[]): void;
-
-  /**
-   * The first field can optionally be a "fields" object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  warn(obj: Object, ...params: any[]): void;
-
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  warn(format: any, ...params: any[]): void;
+  warn(error: Error | Object | any, ...params: any[]): void;
 
   /**
    * Returns a boolean: is the `error` level enabled?
@@ -136,21 +86,7 @@ export interface Logger {
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
    */
-  error(error: Error, ...params: any[]): void;
-
-  /**
-   * The first field can optionally be a "fields" object, which
-   * is merged into the log record.
-   *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  error(obj: Object, ...params: any[]): void;
-
-  /**
-   * Uses `util.format` for msg formatting.
-   */
-  error(format: any, ...params: any[]): void;
+  error(error: Error | Object | any, ...params: any[]): void;
 
   /**
    * Returns a boolean: is the `fatal` level enabled?
@@ -164,20 +100,11 @@ export interface Logger {
    * This adds an `err` field with exception details
    * (including the stack) and sets `msg` to the exception
    * message or you can specify the `msg`.
-   */
-  fatal(error: Error, ...params: any[]): void;
-
-  /**
+   *
    * The first field can optionally be a "fields" object, which
    * is merged into the log record.
    *
-   * To pass in an Error *and* other fields, use the `err`
-   * field name for the Error instance.
-   */
-  fatal(obj: Object, ...params: any[]): void;
-
-  /**
    * Uses `util.format` for msg formatting.
    */
-  fatal(format: any, ...params: any[]): void;
+  fatal(error: Error | Object | any, ...params: any[]): void;
 }
