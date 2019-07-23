@@ -1,13 +1,14 @@
 import * as Bunyan from 'bunyan';
 import { LogLevelString } from './LogLevelString';
 import { Logger } from './index';
+import { DefaultLevels } from './DefaultLevels';
 
 export class LoggerService {
   private static cache: { [key: string]: Logger } = {};
-  private static defaultLevels: { [key: string]: LogLevelString } = LoggerService.getDefaultLevels();
+  private static defaultLevels: DefaultLevels = LoggerService.getDefaultLevels();
   private static bunyanLogger: Bunyan = Bunyan.createLogger({
-    name: process.env['AWS_LAMBDA_FUNCTION_NAME'] || 'default_level',
-    level: LoggerService.defaultLevels['default'],
+    name: process.env['AWS_LAMBDA_FUNCTION_NAME'] || 'defaulty',
+    level: LoggerService.defaultLevels['default_level'],
   });
 
   private constructor() {}
@@ -24,7 +25,7 @@ export class LoggerService {
    * @param level to define on the default logger.
    */
   public static setLevel(level: LogLevelString): void {
-    this.defaultLevels['default_level'] = level;
+    this.defaultLevels.default_level = level;
     this.bunyanLogger.level(level);
   }
 
@@ -35,6 +36,7 @@ export class LoggerService {
    */
   public static named(component: string, options?: { [key: string]: string }): Logger {
     let logger: Logger | undefined = this.cache[component.toLowerCase()];
+
     if (!logger) {
       logger = this.bunyanLogger.child({
         ...(options || {}),
@@ -49,16 +51,17 @@ export class LoggerService {
 
       this.cache[component.toLowerCase()] = logger;
     }
+
     return logger;
   }
 
   /**
    * Generates derault logging levels for
    */
-  private static getDefaultLevels(): { [key: string]: LogLevelString } {
+  private static getDefaultLevels(): DefaultLevels {
     const staticConfig: string = process.env.LOG_LEVEL || 'info';
     const configs: string[] = staticConfig.split(';');
-    const levels: { [key: string]: LogLevelString } = {
+    const levels: DefaultLevels = {
       default_level: configs.shift() as LogLevelString,
     };
 
