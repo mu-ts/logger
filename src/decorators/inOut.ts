@@ -18,9 +18,14 @@ export function inOut(config?: LoggerConfig) {
     const method = descriptor.value;
 
     descriptor.value = function(...args: any[]) {
-      decoratorLogger.log(config && config.level ? config.level : 'debug', `${new String(propertyKey)}()`, '-->', {
-        args,
-      });
+      decoratorLogger.log(
+        config && config.level ? config.level : 'debug',
+        `${new String(propertyKey)}()`,
+        'inOut -->',
+        {
+          args,
+        }
+      );
 
       let result: any | Promise<any> = method.apply(target, args);
 
@@ -28,7 +33,7 @@ export function inOut(config?: LoggerConfig) {
         decoratorLogger.log(
           config && config.level ? config.level : 'debug',
           `${new String(propertyKey)}()`,
-          'promisified function',
+          'inOut -- promisified function',
           {
             result,
           }
@@ -40,7 +45,7 @@ export function inOut(config?: LoggerConfig) {
               decoratorLogger.log(
                 config && config.level ? config.level : 'debug',
                 `${new String(propertyKey)}()`,
-                '<--',
+                'inOut <--',
                 {
                   resolvedValue,
                 }
@@ -52,9 +57,14 @@ export function inOut(config?: LoggerConfig) {
 
         return newPromise;
       } else {
-        decoratorLogger.log(config && config.level ? config.level : 'debug', `${new String(propertyKey)}()`, '<--', {
-          result,
-        });
+        decoratorLogger.log(
+          config && config.level ? config.level : 'debug',
+          `${new String(propertyKey)}()`,
+          'inOut <--',
+          {
+            result,
+          }
+        );
         return result;
       }
     };
