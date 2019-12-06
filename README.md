@@ -2,6 +2,9 @@
 
 Simple and lightweight logging.
 
+  //TODO accept function as an argument, that takes in level to determine if it should execute.
+
+
 # Usage
 
 To get a logger instance you can call `.child({options...})` from a parent logger, use `LoggerService.named('name',{options..})` or you can use the `defaultLogger()` static function, which creates a ConsoleLogger.

@@ -1,7 +1,7 @@
 {
   "name": "@mu-ts/logger",
-  "version": "2.2.1",
-  "description": "Logging facade over Bunyan",
+  "version": "3.0.0",
+  "description": "Simple, lightweight and extendable logging.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "matt.filion@gmail.com",
@@ -58,7 +58,6 @@
     "all": true
   },
   "devDependencies": {
-    "@types/bunyan": "^1.8.6",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.18",
@@ -73,7 +72,5 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3"
   },
-  "dependencies": {
-    "bunyan": "^1.8.12"
-  }
+  "dependencies": {}
 }

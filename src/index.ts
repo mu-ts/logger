@@ -1,17 +1,9 @@
 import { Logger } from './Logger';
-import { inOut } from './inOut';
+import { LoggerConfig } from './LoggerConfig';
 import { LogLevelString } from './LogLevelString';
+import { LoggerFactory } from './LoggerFactory';
 import { LoggerService } from './LoggerService';
+import { inOut } from './decorators/inOut';
+import { duration } from './decorators/duration';
 
-export { Logger, LoggerService, LogLevelString, inOut };
-
-LoggerService.defaultLogger().info(
-  {
-    memory: process.env['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'],
-    version: process.env['AWS_LAMBDA_FUNCTION_VERSION'],
-    region: process.env['AWS_REGION'],
-    runtime: process.env['AWS_LAMBDA_RUNTIME_API'],
-    handler: process.env['_HANDLER'],
-  },
-  'init'
-);
+export { Logger, LoggerConfig, LoggerService, LoggerFactory, LogLevelString, inOut, duration };
