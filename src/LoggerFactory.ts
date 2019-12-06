@@ -1,4 +1,4 @@
-import { Logger, LoggerService } from '.';
+import { Logger } from '.';
 import { LoggerConfig } from './LoggerConfig';
 
 /**

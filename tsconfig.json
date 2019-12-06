@@ -34,7 +34,7 @@
     "moduleResolution": "node",
     "rootDir": "./",
     "outDir": "./dist",
-    "types": ["node", "bunyan"]
+    "types": ["node"]
   },
   "exclude": ["node_modules", "*.spec/**/*.spec.ts"],
   "include": ["src/**/*"]

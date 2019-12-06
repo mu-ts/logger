@@ -77,34 +77,3 @@ export function inOut(config?: LoggerConfig) {
     return descriptor;
   };
 }
-
-class Test {
-  private logger: Logger;
-
-  constructor() {
-    this.logger = LoggerService.named('TestLogger');
-  }
-
-  @inOut()
-  public doThis(x: string): string {
-    return `Result ${x}`;
-  }
-
-  @duration()
-  @inOut()
-  public async doThisLonger(x: string): Promise<string> {
-    return new Promise((resolve, reject) =>
-      setTimeout(() => {
-        resolve(`Result ${x}`);
-      }, 435)
-    );
-  }
-}
-const test: Test = new Test();
-
-async function doThing() {
-  test.doThis('test');
-  const value: string = await test.doThisLonger('test');
-}
-
-doThing();

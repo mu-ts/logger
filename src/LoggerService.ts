@@ -1,6 +1,6 @@
 import { LogLevelString, LoggerConfig, Logger, LoggerFactory } from '.';
 import { DefaultLevels } from './DefaultLevels';
-import { ConsoleLoggerFactory } from './impl/ConsoleLoggerFactory';
+import { ConsoleLoggerFactory } from './ootb/ConsoleLoggerFactory';
 
 /**
  * All 'original' logger should be created from this service. It will ensure that when
@@ -20,6 +20,7 @@ export class LoggerService {
    * @param loggerFactory to use when creating new logger instances.
    */
   public static setLoggerFactory(loggerFactory: LoggerFactory) {
+    if (!loggerFactory.newLogger) throw new Error('Logger factory is invalid.');
     this.loggerFactory = loggerFactory;
   }
 
@@ -33,18 +34,10 @@ export class LoggerService {
 
   /**
    *
+   * @return default level of all created loggers.
    */
-  public static initLog(): void {
-    LoggerService.named(process.env.AWS_LAMBDA_FUNCTION_NAME || 'default').info(
-      {
-        mem: process.env['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'] || process.memoryUsage(),
-        ver: process.env['AWS_LAMBDA_FUNCTION_VERSION'],
-        home: process.env['AWS_REGION'] || process.env.PWD,
-        runtime: process.env['AWS_LAMBDA_RUNTIME_API'] || process.version,
-        handler: process.env['_HANDLER'],
-      },
-      'init()'
-    );
+  public static getLevel(): LogLevelString {
+    return this.defaultLevels.default_level;
   }
 
   /**
@@ -55,11 +48,16 @@ export class LoggerService {
    */
   public static named(options: string | LoggerConfig): Logger {
     const name = typeof options === 'string' ? options : options.name;
+
     if (!name) {
       throw new Error('A named logger requires a name as a part of the LoggerConfig.');
     }
+
     const safeName: string = name.toLowerCase();
+
     let level: LogLevelString;
+
+    console.log('this.defaultLevels', this.defaultLevels);
 
     /**
      * Get the log level to use for the logger.
@@ -72,6 +70,8 @@ export class LoggerService {
       level = this.defaultLevels[this.DEFAULT_LEVEL_NAME];
     }
 
+    if (!level) level = 'info';
+
     let logger: Logger | undefined = this.cache[safeName];
 
     if (!logger) {
@@ -83,6 +83,7 @@ export class LoggerService {
       }
 
       logger = this.loggerFactory.newLogger({ name, level });
+
       this.cache[safeName] = logger;
     }
 

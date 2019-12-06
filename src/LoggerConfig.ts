@@ -1,6 +1,6 @@
 import { LogLevelString } from '.';
 
 export interface LoggerConfig {
-  name: string;
+  name?: string;
   level?: LogLevelString;
 }

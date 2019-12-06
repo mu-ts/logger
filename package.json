@@ -7,10 +7,12 @@
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
-    "lint": "tslint 'src/**/*.ts'",
     "build": "tsc -p .",
-    "pretest": "npm run build",
-    "test": "nyc ts-mocha ./**/*.spec.ts"
+    "test": "nyc mocha -r ts-node/register spec/**/*.spec.ts",
+    "coverage": "nyc report --reporter text-summary",
+    "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",
+    "documentation": "typedoc --out documentation src",
+    "lint": "tslint -p ."
   },
   "files": [
     "dist/*",
@@ -38,25 +40,6 @@
   "bugs": {
     "url": "https://github.com/mu-ts/logger/issues"
   },
-  "nyc": {
-    "extensions": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "excludes": [
-      "**/*.d.ts",
-      "**/*.spec.ts",
-      "coverage/*"
-    ],
-    "reporter": [
-      "html",
-      "json",
-      "text"
-    ],
-    "all": true
-  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
@@ -72,5 +55,28 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  
+  "nyc": {
+    "include": [
+      "src/*.ts",
+      "src/**/*.ts"
+    ],
+    "exclude": [
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "all": true
+  }
 }

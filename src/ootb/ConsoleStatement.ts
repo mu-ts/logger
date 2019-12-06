@@ -8,5 +8,6 @@ export interface ConsoleStatement {
   msg: string;
   level: LogLevelString;
   err?: Error;
+  errs?: Error[];
   data?: { [key: string]: any };
 }

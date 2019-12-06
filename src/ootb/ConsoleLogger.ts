@@ -1,6 +1,5 @@
-import { Logger, LogLevelString, LoggerFactory, LoggerService } from '..';
+import { Logger, LogLevelString, LoggerFactory } from '..';
 import { LoggerConfig } from '../LoggerConfig';
-import { ConsoleLoggerFactory } from './ConsoleLoggerFactory';
 import { ConsoleStatement } from './ConsoleStatement';
 
 export class ConsoleLogger implements Logger {
@@ -10,6 +9,7 @@ export class ConsoleLogger implements Logger {
 
   constructor(options: LoggerConfig, loggerFactory: LoggerFactory) {
     this.loggerFactory = loggerFactory;
+    if (!options.name) throw new Error('Name must be provied in the options for a new ConsoleLogger.');
     this.name = options.name;
     this.level = options.level || 'info';
   }
@@ -28,7 +28,11 @@ export class ConsoleLogger implements Logger {
   }
 
   public start(label: string): void {
-    console.time(`${this.name}.${label}`);
+    try {
+      console.time(`${this.name}.${label}`);
+    } catch (error) {
+      console.warn('Error creating start timer.', error);
+    }
   }
 
   public stop(label: string): void {
@@ -48,45 +52,23 @@ export class ConsoleLogger implements Logger {
   }
 
   public isDebug() {
-    return ['trace', 'debug'].includes(this.level);
+    return ['debug', 'trace'].includes(this.level);
   }
 
   public isInfo() {
-    return ['trace', 'debug', 'info'].includes(this.level);
+    return ['info', 'debug', 'trace'].includes(this.level);
   }
 
   public isWarn() {
-    return ['trace', 'debug', 'info', 'warn'].includes(this.level);
+    return ['warn', 'info', 'debug', 'trace'].includes(this.level);
   }
 
   public isError() {
-    return ['trace', 'debug', 'info', 'warn', 'error'].includes(this.level);
+    return ['error', 'warn', 'info', 'debug', 'trace'].includes(this.level);
   }
 
   public isFatal() {
-    return ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].includes(this.level);
-  }
-
-  public log(level: LogLevelString, ...params: Error | string | any): void {
-    const statement: ConsoleStatement = this.toStatement(...params);
-
-    statement.name = this.name;
-    statement.level = level;
-
-    switch (statement.level) {
-      case 'trace':
-      case 'debug':
-      case 'info':
-        console.log(statement);
-        break;
-      case 'warn':
-        console.warn(statement);
-        break;
-      case 'error':
-      case 'fatal':
-      default:
-        console.error(statement);
-    }
+    return true;
   }
 
   public trace(...params: Error | string | any) {
@@ -111,6 +93,35 @@ export class ConsoleLogger implements Logger {
 
   public fatal(...params: Error | string | any) {
     this.log('fatal', ...params);
+  }
+
+  public log(level: LogLevelString, ...params: Error | string | any): void {
+    const statement: ConsoleStatement = this.toStatement(...params);
+
+    statement.name = this.name;
+    statement.level = level;
+
+    switch (statement.level) {
+      case 'trace':
+        if (this.isTrace()) console.log(statement);
+        break;
+      case 'debug':
+        if (this.isDebug()) console.log(statement);
+        break;
+      case 'info':
+        if (this.isInfo()) console.log(statement);
+        break;
+      case 'warn':
+        if (this.isWarn()) console.warn(statement);
+        break;
+      case 'error':
+        if (this.isError()) console.error(statement);
+        break;
+      case 'fatal':
+      default:
+        if (this.isFatal()) console.error(statement);
+        break;
+    }
   }
 
   /**
@@ -149,10 +160,14 @@ export class ConsoleLogger implements Logger {
           }
         }
 
-        if (!accumulator.err && param instanceof Error) accumulator.err = param;
-        else if (params.length === 1 && typeof param === 'object') {
-          accumulator = { ...accumulator, ...param };
-        } else if (params.length > 1 && typeof param === 'object') {
+        if (param instanceof Error) {
+          if (!accumulator.err) accumulator.err = param;
+          else if (accumulator.err) {
+            accumulator.errs = [accumulator.err, param];
+          } else if (accumulator.errs) {
+            accumulator.errs.push(param);
+          }
+        } else if (typeof param === 'object') {
           if (!accumulator.data) accumulator.data = {};
           const name: string = param.constructor.name;
           if (name === 'Object') accumulator.data = { ...accumulator.data, ...param };
@@ -167,18 +182,3 @@ export class ConsoleLogger implements Logger {
     return statement;
   }
 }
-
-// class User {
-//   name: string = 'joe';
-// }
-// const loggerFactory: LoggerFactory = new ConsoleLoggerFactory();
-// const logger: Logger = new ConsoleLogger({ name: 'test', level: 'trace' }, loggerFactory);
-
-// // logger.trace({ trace: true }, { msg: 'Message that needs attention.', kk: true }, new User(), new Error());
-
-// logger.trace('Couldnt get this to work.t', 'test()', new User());
-// // logger.warn('Couldnt get this to work.w', new Error());
-// // logger.error('Couldnt get this to work.e', new Error());
-// // logger.fatal('Couldnt get this to work. f', new Error());
-
-// LoggerService.init();
