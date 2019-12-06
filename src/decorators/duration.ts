@@ -16,7 +16,7 @@ import { LogLevelString, LoggerService, Logger } from '..';
 export function duration(config?: { atLevel: LogLevelString }) {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     const parent: string = target.constructor.name;
-    const decoratorLogger: Logger = target.logger || LoggerService.named(parent);
+    const decoratorLogger: Logger = LoggerService.named(parent).child('duration');
     const method = descriptor.value;
 
     descriptor.value = function(...args: any[]) {

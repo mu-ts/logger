@@ -70,7 +70,7 @@ export class ConsoleLogger implements Logger {
   public log(level: LogLevelString, ...params: Error | string | any): void {
     const statement: ConsoleStatement = this.toStatement(...params);
 
-    statement.obj = this.name;
+    statement.name = this.name;
     statement.level = level;
 
     switch (statement.level) {
@@ -122,6 +122,13 @@ export class ConsoleLogger implements Logger {
       .filter((param: Error | string | any) => param !== undefined)
       .reduce((accumulator: ConsoleStatement, param: Error | string | any): ConsoleStatement => {
         if (!accumulator.at) accumulator.at = new Date();
+
+        if (!accumulator.clazz) {
+          if (typeof param !== 'string' && param.clazz) {
+            accumulator.clazz = `${param.clazz}`;
+            delete param.clazz;
+          }
+        }
 
         if (!accumulator.func) {
           if (typeof param === 'string' && param.endsWith('()')) accumulator.func = param;

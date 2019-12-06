@@ -1,11 +1,12 @@
 import { LogLevelString } from '..';
 
 export interface ConsoleStatement {
-  obj: string;
-  func: string;
+  name: string;
+  clazz?: string;
+  func?: string;
   at: Date;
   msg: string;
   level: LogLevelString;
-  err: Error;
-  data: { [key: string]: any };
+  err?: Error;
+  data?: { [key: string]: any };
 }

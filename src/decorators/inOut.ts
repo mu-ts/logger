@@ -14,13 +14,15 @@ import { duration } from './duration';
  */
 export function inOut(config?: LoggerConfig) {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
-    const decoratorLogger: Logger = target.logger || LoggerService.named(target.constructor.name);
+    const parent: string = target.constructor.name;
+    const decoratorLogger: Logger = LoggerService.named(parent).child('inOut');
     const method = descriptor.value;
 
     descriptor.value = function(...args: any[]) {
       decoratorLogger.log(
         config && config.level ? config.level : 'debug',
         `${new String(propertyKey)}()`,
+        { clazz: parent },
         'inOut -->',
         {
           args,
@@ -33,6 +35,7 @@ export function inOut(config?: LoggerConfig) {
         decoratorLogger.log(
           config && config.level ? config.level : 'debug',
           `${new String(propertyKey)}()`,
+          { clazz: parent },
           'inOut -- promisified function',
           {
             result,
@@ -46,6 +49,7 @@ export function inOut(config?: LoggerConfig) {
                 config && config.level ? config.level : 'debug',
                 `${new String(propertyKey)}()`,
                 'inOut <--',
+                { clazz: parent },
                 {
                   resolvedValue,
                 }
@@ -61,6 +65,7 @@ export function inOut(config?: LoggerConfig) {
           config && config.level ? config.level : 'debug',
           `${new String(propertyKey)}()`,
           'inOut <--',
+          { clazz: parent },
           {
             result,
           }
@@ -74,14 +79,20 @@ export function inOut(config?: LoggerConfig) {
 }
 
 class Test {
+  private logger: Logger;
+
+  constructor() {
+    this.logger = LoggerService.named('TestLogger');
+  }
+
   @inOut()
-  doThis(x: string): string {
+  public doThis(x: string): string {
     return `Result ${x}`;
   }
 
   @duration()
   @inOut()
-  async doThisLonger(x: string): Promise<string> {
+  public async doThisLonger(x: string): Promise<string> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
         resolve(`Result ${x}`);
@@ -89,10 +100,9 @@ class Test {
     );
   }
 }
+const test: Test = new Test();
 
 async function doThing() {
-  const test: Test = new Test();
-
   test.doThis('test');
   const value: string = await test.doThisLonger('test');
 }
