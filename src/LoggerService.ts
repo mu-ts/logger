@@ -1,6 +1,6 @@
-import { LogLevelString, LoggerConfig, Logger, LoggerFactory } from '.';
-import { DefaultLevels } from './DefaultLevels';
-import { ConsoleLoggerFactory } from './ootb/ConsoleLoggerFactory';
+import { LogLevelString, LoggerFilter, LoggerConfig, Logger, LoggerFactory } from '.';
+import { DefaultLevels } from './interfaces/DefaultLevels';
+import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
 
 /**
  * All 'original' logger should be created from this service. It will ensure that when
@@ -14,6 +14,14 @@ export class LoggerService {
   private static loggerFactory: LoggerFactory | undefined;
 
   private constructor() {}
+
+  /**
+   *
+   * @param filter will look at the value, attributes or contents of a statement and
+   *               remove or replace (redact) it. This is used to avoid leaking sensitive
+   *               data like passwords, credit cards or sercets.
+   */
+  public static registerFilter(filter: LoggerFilter): void {}
 
   /**
    *

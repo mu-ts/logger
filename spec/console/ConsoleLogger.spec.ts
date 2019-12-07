@@ -2,7 +2,7 @@ import 'mocha';
 import { randomBytes } from 'crypto';
 import { expect } from 'chai';
 import { LogLevelString, Logger } from '../../src';
-import { ConsoleLogger } from '../../src/ootb/ConsoleLogger';
+import { ConsoleLogger } from '../../src/console/ConsoleLogger';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
 
 describe('ConsoleLogger', () => {
@@ -55,7 +55,7 @@ describe('ConsoleLogger', () => {
       const loggerName: string = `tester.${level}`;
       logger = new ConsoleLogger({ name: loggerName, level }, mockLoggerFactory);
       expect(logger).to.not.be.undefined;
-      expect(logger).to.have.all.keys('level', 'loggerFactory', 'name');
+      expect(logger).to.have.all.keys('level', 'loggerFactory', 'name', 'filters');
       expect(logger)
         .to.have.property('name')
         .that.equals(loggerName);

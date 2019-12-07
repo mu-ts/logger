@@ -1,4 +1,4 @@
-import { LogLevelString } from '.';
+import { LogLevelString } from '..';
 
 /**
  * Internal tracking of logging levels by name.

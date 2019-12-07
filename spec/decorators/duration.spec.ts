@@ -37,9 +37,12 @@ describe('@duration', () => {
 
     expect(descriptor).to.not.be.undefined;
 
+    const logger: MockLogger = LoggerService.named(`TestClass.duration`) as MockLogger;
+    logger.clearLogStatements();
+
     descriptor.value('test');
 
-    const statements: MockLoggerStatement[] = (loggerFactory.getLogger() as MockLogger).getLogStatements();
+    const statements: MockLoggerStatement[] = logger.getLogStatements();
 
     expect(statements).to.have.lengthOf(2);
     expect(statements[0])
@@ -70,9 +73,12 @@ describe('@duration', () => {
 
     expect(descriptor).to.not.be.undefined;
 
+    const logger: MockLogger = LoggerService.named(`TestClass.duration`) as MockLogger;
+    logger.clearLogStatements();
+
     await descriptor.value('test');
 
-    const statements: MockLoggerStatement[] = (loggerFactory.getLogger() as MockLogger).getLogStatements();
+    const statements: MockLoggerStatement[] = logger.getLogStatements();
 
     expect(statements).to.have.lengthOf(2);
     expect(statements[0])

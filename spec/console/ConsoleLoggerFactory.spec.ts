@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 import { LogLevelString, Logger } from '../../src';
-import { ConsoleLoggerFactory } from '../../src/ootb/ConsoleLoggerFactory';
+import { ConsoleLoggerFactory } from '../../src/console/ConsoleLoggerFactory';
 
 describe('ConsoleLoggerFactory', () => {
   let mockLoggerFactory: ConsoleLoggerFactory;

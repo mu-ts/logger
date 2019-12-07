@@ -1,4 +1,4 @@
-import { Logger } from '.';
+import { Logger, LoggerFilter } from '..';
 import { LoggerConfig } from './LoggerConfig';
 
 /**
@@ -9,5 +9,5 @@ export interface LoggerFactory {
    *
    * @param options used to create the new Logger class.
    */
-  newLogger(options: LoggerConfig): Logger;
+  newLogger(options: LoggerConfig, filters?: LoggerFilter[]): Logger;
 }

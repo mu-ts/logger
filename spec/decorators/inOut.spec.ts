@@ -22,11 +22,6 @@ describe('@inOut', () => {
     }
   }
 
-  beforeEach(() => {
-    const logger: MockLogger = LoggerService.named(`TestClass.inOut`) as MockLogger;
-    logger.clearLogStatements();
-  });
-
   it('define without error.', () => {
     expect(() => inOut()).to.not.be.undefined;
   });

@@ -1,17 +1,19 @@
-import { Logger, LogLevelString, LoggerFactory } from '..';
-import { LoggerConfig } from '../LoggerConfig';
-import { ConsoleStatement } from './ConsoleStatement';
+import { Logger, LogLevelString, LoggerFactory, LoggerFilter } from '..';
+import { LoggerConfig } from '../interfaces/LoggerConfig';
+import { LoggerStatement } from '../interfaces/LoggerStatement';
 
 export class ConsoleLogger implements Logger {
   private readonly name: string;
   private readonly loggerFactory: LoggerFactory;
   private level: LogLevelString;
+  private filters: LoggerFilter[] | undefined;
 
-  constructor(options: LoggerConfig, loggerFactory: LoggerFactory) {
+  constructor(options: LoggerConfig, loggerFactory: LoggerFactory, filters?: LoggerFilter[]) {
     this.loggerFactory = loggerFactory;
     if (!options.name) throw new Error('Name must be provied in the options for a new ConsoleLogger.');
     this.name = options.name;
     this.level = options.level || 'info';
+    this.filters = filters;
   }
 
   /**
@@ -96,30 +98,29 @@ export class ConsoleLogger implements Logger {
   }
 
   public log(level: LogLevelString, ...params: Error | string | any): void {
-    const statement: ConsoleStatement = this.toStatement(...params);
-
-    statement.name = this.name;
-    statement.level = level;
-
-    switch (statement.level) {
+    /**
+     * Statements are not created until a logging statement is
+     * actually requested to avoid unnecssary work.
+     */
+    switch (level) {
       case 'trace':
-        if (this.isTrace()) console.log(statement);
+        if (this.isTrace()) console.log(this.toStatement(level, ...params));
         break;
       case 'debug':
-        if (this.isDebug()) console.log(statement);
+        if (this.isDebug()) console.log(this.toStatement(level, ...params));
         break;
       case 'info':
-        if (this.isInfo()) console.log(statement);
+        if (this.isInfo()) console.log(this.toStatement(level, ...params));
         break;
       case 'warn':
-        if (this.isWarn()) console.warn(statement);
+        if (this.isWarn()) console.warn(this.toStatement(level, ...params));
         break;
       case 'error':
-        if (this.isError()) console.error(statement);
+        if (this.isError()) console.error(this.toStatement(level, ...params));
         break;
       case 'fatal':
       default:
-        if (this.isFatal()) console.error(statement);
+        if (this.isFatal()) console.error(this.toStatement(level, ...params));
         break;
     }
   }
@@ -128,10 +129,10 @@ export class ConsoleLogger implements Logger {
    *
    * @param params to format into a log statement.
    */
-  private toStatement(...params: Error | string | any): ConsoleStatement {
-    const statement: ConsoleStatement = params
+  private toStatement(level: LogLevelString, ...params: Error | string | any): LoggerStatement {
+    const statement: LoggerStatement = params
       .filter((param: Error | string | any) => param !== undefined)
-      .reduce((accumulator: ConsoleStatement, param: Error | string | any): ConsoleStatement => {
+      .reduce((accumulator: LoggerStatement, param: Error | string | any): LoggerStatement => {
         if (!accumulator.at) accumulator.at = new Date();
 
         if (!accumulator.clazz) {
@@ -179,6 +180,30 @@ export class ConsoleLogger implements Logger {
         return accumulator;
       }, {});
 
+    statement.name = this.name;
+    statement.level = level;
+
+    /**
+     * If a deep clone is not done of the objects then there is a risk of
+     * modifying a logged object during filtering of logged out data.
+     */
+    if (statement.data || statement.msg) {
+      if (statement.data) statement.data = this.deepCopy(statement.data);
+      if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
+    }
+
     return statement;
+  }
+
+  /**
+   *
+   * @param target to create a clone of.
+   */
+  private deepCopy(target: any): any {
+    /**
+     * This is pretty heavy handed. We can update this to a more efficient
+     * algorithm if a performance issue is located with it.
+     */
+    return JSON.parse(JSON.stringify(target));
   }
 }
