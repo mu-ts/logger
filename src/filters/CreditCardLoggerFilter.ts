@@ -33,7 +33,10 @@ export class CreditCardLoggerFilter implements LoggerFilter {
           data[fieldName] = this.redact(value);
         }
       } else if (typeof value === 'number' && `${value}`.length === 16) {
-        data[fieldName] = this.replaceValue;
+        /*
+         * Setting to redacted will change the data type.
+         */
+        data[fieldName] = -1;
       } else if (typeof value === 'string') {
         /**
          * Look for a match, with a lower cased name, and with
@@ -47,17 +50,3 @@ export class CreditCardLoggerFilter implements LoggerFilter {
     return data;
   }
 }
-
-new CreditCardLoggerFilter().filter({
-  msg: 'Here is my credit card 1234 1231 1231 3212',
-  at: new Date(),
-  level: 'info',
-  name: 'Test',
-  data: {
-    user: {
-      credit: 1234567890123456,
-      card: '3214 5321 1234 3213',
-      bankNumber: 'This is 3214 5321 1234 3213',
-    },
-  },
-});

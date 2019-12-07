@@ -151,8 +151,6 @@ describe('@inOut', () => {
         .to.have.property('msg')
         .that.equals('inOut -- promisified function');
 
-      console.log('statement 3', statements[2].getParams());
-
       expect(statements[2])
         .to.have.property('type')
         .that.equals(`log.${level || 'debug'}`);

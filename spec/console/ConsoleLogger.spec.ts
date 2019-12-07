@@ -4,6 +4,7 @@ import { expect } from 'chai';
 import { LogLevelString, Logger } from '../../src';
 import { ConsoleLogger } from '../../src/console/ConsoleLogger';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
+import { LoggerStatement } from '../../src/interfaces/LoggerStatement';
 
 describe('ConsoleLogger', () => {
   let logger: ConsoleLogger | undefined;
@@ -584,6 +585,65 @@ describe('ConsoleLogger', () => {
         it('at warn level', () => testObject(new TestObject('Simple test.', 23), 'fatal', true, 'warn'));
         it('at error level', () => testObject(new TestObject('Simple test.', 23), 'fatal', true, 'error'));
         it('at fatal level', () => testObject(new TestObject('Simple test.', 23), 'fatal', true, 'fatal'));
+      });
+    });
+
+    describe('an Object() filtered without modifying it', () => {
+      class TestObject {
+        constructor(public name: string, public age: number) {}
+      }
+      const testObject = (
+        param: string | Error | any,
+        atLevel: LogLevelString,
+        shouldShow: boolean,
+        level?: LogLevelString
+      ) => {
+        const filter = (logStatement: LoggerStatement) => {
+          if (logStatement.data) logStatement.data.TestObject.name = '>>> REDACTED <<<';
+        };
+
+        logger = new ConsoleLogger({ name: 'is.check', level }, mockLoggerFactory, [{ filter }]);
+        logger.log(atLevel, param);
+
+        let output: any[];
+
+        if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
+        else if (atLevel === 'warn') output = warnOutput;
+        else output = logOutput;
+
+        if (!shouldShow) {
+          expect(output.length).to.equal(0);
+        } else {
+          expect(output.length).to.equal(1);
+          expect(output[0]).to.have.keys('at', 'data', 'name', 'level');
+          expect(output[0])
+            .to.have.property('level')
+            .that.equals(atLevel);
+
+          const testObjectFromData: any = output[0].data.TestObject;
+          expect(testObjectFromData)
+            .to.have.property('name')
+            .that.eqls('>>> REDACTED <<<');
+          expect(testObjectFromData)
+            .to.have.property('age')
+            .that.eqls(param.age);
+
+          /*  ORIGINAL Value should be same, as value redaction should not impact 'original' values. */
+
+          expect(param)
+            .to.have.property('name')
+            .that.equals('Simple test.');
+        }
+      };
+
+      describe('trace ', () => {
+        it('at default level', () => testObject(new TestObject('Simple test.', 23), 'trace', false));
+        it('at trace level', () => testObject(new TestObject('Simple test.', 23), 'trace', true, 'trace'));
+        it('at debug level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'debug'));
+        it('at info level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'info'));
+        it('at warn level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'warn'));
+        it('at error level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'error'));
+        it('at fatal level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'fatal'));
       });
     });
 
