@@ -1,7 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { LogLevelString, Logger } from '../../src';
-import { SensitiveNameLoggerFilter } from '../../src/filters/SensitiveNameLoggerFilter';
+import { SensitiveNameLoggerFilter } from '../../src/index';
 import { LoggerStatement } from '../../src/interfaces/LoggerStatement';
 
 describe('SensitiveNameLoggerFilter', () => {

@@ -1,4 +1,4 @@
-import { LoggerConfig, LoggerFactory, Logger, LoggerFilter } from '..';
+import { LoggerConfig, LoggerFactory, Logger, LoggerFilter } from '../index';
 import { ConsoleLogger } from './ConsoleLogger';
 
 /**

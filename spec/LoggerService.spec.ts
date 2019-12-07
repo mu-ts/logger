@@ -1,8 +1,8 @@
-import { expect } from 'chai';
 import 'mocha';
+import { expect } from 'chai';
 import { LoggerService } from '../src/LoggerService';
 import { MockLoggerFactory } from './mock/MockLoggerFactory';
-import { LoggerFactory, LogLevelString, Logger } from '../src';
+import { LoggerFactory, LogLevelString, Logger } from '../src/index';
 
 process.env.LOG_LEVEL =
   'info;TestForTrace trace;TestForDebug debug;TestForInfo info;TestForWarn warn;TestForError error;TestForFattal fatal;';

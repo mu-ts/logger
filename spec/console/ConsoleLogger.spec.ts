@@ -1,7 +1,7 @@
 import 'mocha';
 import { randomBytes } from 'crypto';
 import { expect } from 'chai';
-import { LogLevelString, Logger } from '../../src';
+import { LogLevelString } from '../../src/index';
 import { ConsoleLogger } from '../../src/console/ConsoleLogger';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
 import { LoggerStatement } from '../../src/interfaces/LoggerStatement';

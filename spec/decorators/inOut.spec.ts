@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 import { inOut } from '../../src/decorators/inOut';
-import { LogLevelString, LoggerService } from '../../src';
+import { LogLevelString, LoggerService } from '../../src/index';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
 import { MockLoggerStatement } from '../mock/MockLoggerStatement';
 import { MockLogger } from '../mock/MockLogger';
@@ -29,7 +29,7 @@ describe('@inOut', () => {
   describe('on synchronous functions', () => {
     const testSynchronous = (level?: LogLevelString) => {
       const functionName: string = 'doSync';
-      const doInOut: Function = inOut({ level });
+      const doInOut: Function = inOut({ atLevel: level });
       const descriptor: PropertyDescriptor = doInOut(
         TestClass.prototype,
         functionName,
@@ -98,7 +98,7 @@ describe('@inOut', () => {
   describe('on an asynchronous functions', () => {
     const testASynchronous = async (level?: LogLevelString) => {
       const functionName: string = 'doASync';
-      const doInOut: Function = inOut({ level });
+      const doInOut: Function = inOut({ atLevel: level });
       const descriptor: PropertyDescriptor = doInOut(
         TestClass.prototype,
         functionName,

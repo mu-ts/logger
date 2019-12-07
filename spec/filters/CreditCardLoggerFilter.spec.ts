@@ -1,7 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { LogLevelString, Logger } from '../../src';
-import { CreditCardLoggerFilter } from '../../src/filters/CreditCardLoggerFilter';
+import { CreditCardLoggerFilter } from '../../src/index';
 import { LoggerStatement } from '../../src/interfaces/LoggerStatement';
 
 describe('CreditCardLoggerFilter', () => {
@@ -55,7 +54,7 @@ describe('CreditCardLoggerFilter', () => {
       const data: any = statement.data as any;
 
       expect(message.endsWith('>>> REDACTED <<<')).to.be.true;
-      expect(data.user.credit).equals(-1);
+      expect(data.user.credit).equals('>>> REDACTED <<<');
       expect(data.user.card).equals('>>> REDACTED <<<');
       expect(data.user.bankNumber.endsWith('>>> REDACTED <<<')).to.be.true;
     });
@@ -92,7 +91,7 @@ describe('CreditCardLoggerFilter', () => {
       const data: any = statement.data as any;
       const nestedData: any = data.a.b.c.d.e.user;
 
-      expect(nestedData.credit).equals(-1);
+      expect(nestedData.credit).equals('>>> REDACTED <<<');
       expect(nestedData.innocentValue).equals('>>> REDACTED <<<');
       expect(nestedData.bankNumber.endsWith('>>> REDACTED <<<')).to.be.true;
     });

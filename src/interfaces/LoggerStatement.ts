@@ -1,4 +1,4 @@
-import { LogLevelString } from '..';
+import { LogLevelString } from '../index';
 
 export interface LoggerStatement {
   name: string;

@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { LogLevelString, Logger } from '../../src';
+import { LogLevelString, Logger } from '../../src/index';
 import { ConsoleLoggerFactory } from '../../src/console/ConsoleLoggerFactory';
 
 describe('ConsoleLoggerFactory', () => {

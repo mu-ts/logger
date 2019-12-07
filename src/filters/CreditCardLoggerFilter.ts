@@ -1,4 +1,4 @@
-import { LoggerFilter } from '..';
+import { LoggerFilter } from '../index';
 import { LoggerStatement } from '../interfaces/LoggerStatement';
 
 /**
@@ -33,10 +33,7 @@ export class CreditCardLoggerFilter implements LoggerFilter {
           data[fieldName] = this.redact(value);
         }
       } else if (typeof value === 'number' && `${value}`.length === 16) {
-        /*
-         * Setting to redacted will change the data type.
-         */
-        data[fieldName] = -1;
+        data[fieldName] = this.replaceValue;
       } else if (typeof value === 'string') {
         /**
          * Look for a match, with a lower cased name, and with

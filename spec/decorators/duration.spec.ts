@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 import { duration } from '../../src/decorators/duration';
-import { LoggerService, LoggerFactory } from '../../src';
+import { LoggerService } from '../../src/index';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
 import { MockLogger } from '../mock/MockLogger';
 import { MockLoggerStatement } from '../mock/MockLoggerStatement';

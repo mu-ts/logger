@@ -1,4 +1,4 @@
-import { LogLevelString, LoggerFilter, LoggerConfig, Logger, LoggerFactory } from '.';
+import { LogLevelString, LoggerFilter, LoggerConfig, Logger, LoggerFactory } from './index';
 import { DefaultLevels } from './interfaces/DefaultLevels';
 import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
 
@@ -12,6 +12,7 @@ export class LoggerService {
   private static cache: { [key: string]: Logger } = {};
   private static defaultLevels: DefaultLevels = LoggerService.getDefaultLevels();
   private static loggerFactory: LoggerFactory | undefined;
+  private static filters?: LoggerFilter[] | undefined;
 
   private constructor() {}
 
@@ -21,7 +22,10 @@ export class LoggerService {
    *               remove or replace (redact) it. This is used to avoid leaking sensitive
    *               data like passwords, credit cards or sercets.
    */
-  public static registerFilter(filter: LoggerFilter): void {}
+  public static registerFilter(filter: LoggerFilter): void {
+    if (!this.filters) this.filters = [];
+    this.filters.push(filter);
+  }
 
   /**
    *
@@ -54,7 +58,7 @@ export class LoggerService {
    * @param name to grant this logger.
    * @param options optional attributes to attach to the logging instance.
    */
-  public static named(options: string | LoggerConfig): Logger {
+  public static named(options: string | LoggerConfig, filters?: LoggerFilter[]): Logger {
     const name = typeof options === 'string' ? options : options.name;
 
     if (!name) {
@@ -63,16 +67,18 @@ export class LoggerService {
 
     const safeName: string = name.toLowerCase();
 
-    let level: LogLevelString;
+    let level: LogLevelString | undefined;
 
     /**
      * Get the log level to use for the logger.
      */
     if (options && typeof options !== 'string' && options.level && options.level) {
       level = options.level;
-    } else if (this.defaultLevels[safeName]) {
+    }
+
+    if (this.defaultLevels[safeName]) {
       level = this.defaultLevels[safeName];
-    } else {
+    } else if (!level) {
       level = this.defaultLevels[this.DEFAULT_LEVEL_NAME];
     }
 
@@ -88,7 +94,7 @@ export class LoggerService {
         this.loggerFactory = new ConsoleLoggerFactory();
       }
 
-      logger = this.loggerFactory.newLogger({ name, level });
+      logger = this.loggerFactory.newLogger({ name, level }, filters || this.filters);
 
       this.cache[safeName] = logger;
     }

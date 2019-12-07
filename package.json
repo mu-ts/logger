@@ -3,12 +3,13 @@
   "version": "3.0.0",
   "description": "Simple, lightweight and extendable logging.",
   "main": "dist/index.js",
+  "type": "module",
   "types": "dist/index.d.ts",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
-    "build": "tsc -p .",
-    "test": "nyc mocha -r ts-node/register spec/**/*.spec.ts",
+    "build": "tsc -p . -m ES6",
+    "test": "nyc mocha --require ts-node/register \"spec/**/*.spec.ts\"",
     "coverage": "nyc report --reporter text-summary",
     "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",
     "documentation": "typedoc --out documentation src",
@@ -25,6 +26,7 @@
     "url": "git+https://github.com/mu-ts/logger.git"
   },
   "keywords": [
+    "mu-ts",
     "Logger",
     "Logging",
     "AWS",
@@ -42,12 +44,12 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^11.13.18",
     "aws-sdk": "^2.498.0",
     "chai": "^4.2.0",
     "codecov": "^3.2.0",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "ts-mocha": "^6.0.0",
     "ts-node": "^8.3.0",
@@ -55,28 +57,5 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3"
   },
-  "dependencies": {},
-  
-  "nyc": {
-    "include": [
-      "src/*.ts",
-      "src/**/*.ts"
-    ],
-    "exclude": [
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register",
-      "source-map-support/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true,
-    "all": true
-  }
+  "dependencies": {}
 }

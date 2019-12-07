@@ -1,4 +1,4 @@
-import { LogLevelString, LoggerService, Logger } from '..';
+import { LogLevelString, LoggerService, Logger, LoggerConfig } from '../index';
 
 /**
  * Prints out the amount of time a function takes to execute.
@@ -13,10 +13,11 @@ import { LogLevelString, LoggerService, Logger } from '..';
  *
  * @param configuration of this inOut logging statement.
  */
-export function duration(config?: { atLevel: LogLevelString }) {
+export function duration() {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     const parent: string = target.constructor.name;
-    const decoratorLogger: Logger = LoggerService.named(`${parent}.duration`);
+    const logConfig: LoggerConfig = { name: `${parent}.duration` };
+    const decoratorLogger: Logger = LoggerService.named(logConfig);
     const method = descriptor.value;
 
     descriptor.value = function(...args: any[]) {

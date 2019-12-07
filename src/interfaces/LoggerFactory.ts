@@ -1,4 +1,4 @@
-import { Logger, LoggerFilter } from '..';
+import { Logger, LoggerFilter } from '../index';
 import { LoggerConfig } from './LoggerConfig';
 
 /**

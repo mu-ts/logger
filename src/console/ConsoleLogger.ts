@@ -1,4 +1,4 @@
-import { Logger, LogLevelString, LoggerFactory, LoggerFilter } from '..';
+import { Logger, LogLevelString, LoggerFactory, LoggerFilter } from '../index';
 import { LoggerConfig } from '../interfaces/LoggerConfig';
 import { LoggerStatement } from '../interfaces/LoggerStatement';
 

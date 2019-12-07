@@ -1,4 +1,4 @@
-import { LoggerFilter } from '..';
+import { LoggerFilter } from '../index';
 import { LoggerStatement } from '../interfaces/LoggerStatement';
 
 /**
