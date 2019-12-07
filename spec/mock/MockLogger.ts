@@ -15,6 +15,14 @@ export class MockLogger implements Logger {
     this.logStatements = [];
   }
 
+  public getLogStatements(): any[] {
+    return this.logStatements;
+  }
+
+  public clearLogStatements(): void {
+    this.logStatements = [];
+  }
+
   /**
    *
    * @param options to create the child logger with. If only a string is provided the
@@ -71,7 +79,7 @@ export class MockLogger implements Logger {
   }
 
   public log(level: LogLevelString, ...params: Error | string | any): void {
-    this.logStatements.push(new MockLoggerStatement(`log.${level}`, params));
+    this.logStatements.push(new MockLoggerStatement(`log.${level}`, ...params));
   }
 
   public trace(...params: Error | string | any) {

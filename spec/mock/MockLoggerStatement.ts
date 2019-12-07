@@ -4,7 +4,8 @@ export class MockLoggerStatement {
 
   constructor(type: string, ...params: any[]) {
     this.type = type;
-    this.params = params;
+    this.params = [];
+    params.forEach((param: any) => this.params.push(param));
   }
 
   public getType(): string {

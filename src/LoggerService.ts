@@ -57,8 +57,6 @@ export class LoggerService {
 
     let level: LogLevelString;
 
-    console.log('this.defaultLevels', this.defaultLevels);
-
     /**
      * Get the log level to use for the logger.
      */

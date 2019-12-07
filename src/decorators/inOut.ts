@@ -1,4 +1,4 @@
-import { LoggerConfig, Logger, LoggerService } from '..';
+import { LoggerConfig, Logger, LoggerService, LogLevelString } from '..';
 import { duration } from './duration';
 
 /**
@@ -15,45 +15,37 @@ import { duration } from './duration';
 export function inOut(config?: LoggerConfig) {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     const parent: string = target.constructor.name;
-    const decoratorLogger: Logger = LoggerService.named(parent).child('inOut');
+    const decoratorLogger: Logger = LoggerService.named(`${parent}.inOut`);
     const method = descriptor.value;
+    const level: LogLevelString = config && config.level ? config.level : 'debug';
 
     descriptor.value = function(...args: any[]) {
-      decoratorLogger.log(
-        config && config.level ? config.level : 'debug',
-        `${new String(propertyKey)}()`,
-        { clazz: parent },
-        'inOut -->',
-        {
-          args,
-        }
-      );
+      decoratorLogger.log(level, {
+        func: `${new String(propertyKey)}()`,
+        clazz: parent,
+        msg: 'inOut -->',
+        args,
+      });
 
       let result: any | Promise<any> = method.apply(target, args);
 
       if ((typeof result === 'function' || typeof result === 'object') && typeof result.then === 'function') {
-        decoratorLogger.log(
-          config && config.level ? config.level : 'debug',
-          `${new String(propertyKey)}()`,
-          { clazz: parent },
-          'inOut -- promisified function',
-          {
-            result,
-          }
-        );
+        decoratorLogger.log(level, {
+          func: `${new String(propertyKey)}()`,
+          clazz: parent,
+          msg: 'inOut -- promisified function',
+          result,
+        });
 
         const newPromise: Promise<any> = new Promise((resolve, reject) => {
           result
             .then((resolvedValue: any) => {
-              decoratorLogger.log(
-                config && config.level ? config.level : 'debug',
-                `${new String(propertyKey)}()`,
-                'inOut <--',
-                { clazz: parent },
-                {
-                  resolvedValue,
-                }
-              );
+              decoratorLogger.log(level, {
+                func: `${new String(propertyKey)}()`,
+                clazz: parent,
+                msg: 'inOut <--',
+                result: resolvedValue,
+              });
               resolve(resolvedValue);
             })
             .catch(reject);
@@ -61,15 +53,12 @@ export function inOut(config?: LoggerConfig) {
 
         return newPromise;
       } else {
-        decoratorLogger.log(
-          config && config.level ? config.level : 'debug',
-          `${new String(propertyKey)}()`,
-          'inOut <--',
-          { clazz: parent },
-          {
-            result,
-          }
-        );
+        decoratorLogger.log(level, {
+          func: `${new String(propertyKey)}()`,
+          clazz: parent,
+          msg: 'inOut <--',
+          result,
+        });
         return result;
       }
     };
