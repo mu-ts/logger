@@ -1,22 +1,22 @@
 {
   "name": "@mu-ts/logger",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Simple, lightweight and extendable logging.",
-  "main": "dist/index.js",
-  "type": "module",
-  "types": "dist/index.d.ts",
+  "main": "./lib/index",
+  "types": "./lib/index",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
-    "build": "tsc -p . -m ES6",
+    "build": "npm run clean && tsc -p .",
     "test": "nyc mocha --require ts-node/register \"spec/**/*.spec.ts\"",
     "coverage": "nyc report --reporter text-summary",
     "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",
     "documentation": "typedoc --out documentation src",
-    "lint": "tslint -p ."
+    "lint": "tslint -p .",
+    "clean": "rm -rf coverage lib .nyc_output"
   },
   "files": [
-    "dist/*",
+    "lib/*",
     "README.md",
     "LICENSE",
     "CODE_OF_CONDUCT.md"

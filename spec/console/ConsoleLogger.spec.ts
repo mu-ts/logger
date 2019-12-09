@@ -748,10 +748,6 @@ describe('ConsoleLogger', () => {
     });
 
     describe('a message and Error', () => {
-      class TestObject {
-        constructor(public name: string, public age: number) {}
-      }
-
       const testMessageAndError = (
         param: (string | Error | any)[],
         atLevel: LogLevelString,

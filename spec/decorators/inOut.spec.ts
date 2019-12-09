@@ -18,7 +18,7 @@ describe('@inOut', () => {
     }
 
     public async doASync(value: string): Promise<string> {
-      return new Promise((resolve, reject) => setTimeout(() => resolve(` --> ${value}`), 25));
+      return new Promise(resolve => setTimeout(() => resolve(` --> ${value}`), 25));
     }
   }
 

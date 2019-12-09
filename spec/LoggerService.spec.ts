@@ -20,6 +20,7 @@ describe('LoggerService', () => {
 
   describe('setLevel()', () => {
     const testGetLevel = (toLevel: LogLevelString, level?: LogLevelString) => {
+      LoggerService.setLevel(level);
       LoggerService.setLevel(toLevel);
       const theLevel: LogLevelString = LoggerService.getLevel();
       expect(theLevel).to.equal(toLevel);

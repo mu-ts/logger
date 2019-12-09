@@ -1,4 +1,4 @@
-import { LogLevelString, LoggerService, Logger, LoggerConfig } from '../index';
+import { LoggerService, Logger, LoggerConfig } from '../index';
 
 /**
  * Prints out the amount of time a function takes to execute.
