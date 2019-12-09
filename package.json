@@ -11,7 +11,6 @@
     "test": "nyc mocha --require ts-node/register \"spec/**/*.spec.ts\"",
     "coverage": "nyc report --reporter text-summary",
     "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",
-    "documentation": "typedoc --out documentation src",
     "lint": "tslint -p .",
     "clean": "rm -rf coverage lib .nyc_output"
   },
