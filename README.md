@@ -1,7 +1,7 @@
 ### @mu-ts/logger
 # Simple lightweight logging.
 
-This logging frameowrk aims to be a good enough logging framework where being lightweight is an asset. For example FaaS situations like AWS Lambda, Azure Functions, , Google Functions, etc. There are a lot out there. A common problem is cold start, which bundle size has an impact.
+This logging framework aims to be a good enough logging framework where being lightweight is an asset. For example FaaS situations like AWS Lambda, Azure Functions, Google Functions, etc. There are a lot out there. A common problem is cold start, where bundle size has an impact.
 
 * [Lightweight](https://bundlephobia.com/result?p=@mu-ts/logger@3.0.2), under `10k`.
 * All the basics; 
