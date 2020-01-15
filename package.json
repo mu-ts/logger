@@ -8,9 +8,9 @@
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
     "build": "tsc -p .",
-    "test": "nyc mocha --require ts-node/register \"spec/**/*.spec.ts\"",
+    "test": "nyc mocha -r ts-node/register spec/**/*.spec.ts",
     "coverage": "nyc report --reporter text-summary",
-    "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",
+    "coverage-export": "nyc report --reporter=lcov > coverage.lcov",
     "lint": "tslint -p .",
     "clean": "rm -rf coverage lib .nyc_output"
   },
@@ -56,5 +56,21 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "nyc": {
+    "include": [
+      "src/*.ts",
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "all": true
+  }
 }
