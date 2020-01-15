@@ -9,7 +9,7 @@ This logging framework aims to be a good enough logging framework where being li
     * per level logging (`debug('message')`)
     * a generic (`log('debug', myArgs, here)`)
     * `start('label')` and `stop('label')` for durations
-* Non strict logging singatures, throw anything you want as arguments `error(new Error(), 'can', 'go in here', 'itsSomeWhatSmart()')`
+* Non strict logging signatures, throw anything you want as arguments `error(new Error(), 'can', 'go in here', 'itsSomeWhatSmart()')`
 * Data filtering, to redact sensitive data like credit cards, secrets or passwords.
 * Console based logging.
 * Outputs JSON for easier parsing.
@@ -64,15 +64,15 @@ doAThing();
 
 ## Adornments
 
-Fancy word  to say you can provide a set of static attributes that will be applied to every output statement. This can be useful when you need to add a static value to each log statement for a logger, or set of loggers.
+Fancy word to say you can provide a set of static attributes that will be applied to every output statement. This can be useful when you need to add a static value to each log statement for a logger, or set of loggers.
 
 NOTE: Adornments do not apply to decorators, at this time.
 
 ## LOG_LEVEL
 
-`LOG_LEVEL` is looked for on `process.env`, and when found, used to defined default log levels when hard coded values are not provided for loggers. However, you can ptionally override a hard coded value if you add a ! in front of the name of a specific named logger. In this case, it will override hard coded values and set it to the value defined.
+`LOG_LEVEL` is looked for on `process.env`, and when found, used to define default log levels when hard coded values are not provided for loggers. However, you can optionally override a hard coded value if you add a ! in front of the name of a specific named logger. In this case, it will override hard coded values and set it to the value defined.
 
-For the name of each logger, any string is valid. All values are stored lower case so dont expect mixed case to provide different loggers.
+For the name of each logger, any string is valid. All values are stored lowercase, so don't expect mixed cases to provide different loggers.
 
 ## Decorators
 
@@ -147,7 +147,7 @@ Default implementation outputs values using `console.timeEnd()` the name is asse
 
 Example: `X.duration.doASync: 0.366ms`
 
-But wait, that's not JSON! Yea, erring on the side of using out of the box behavior instead of build this out. It's easy to create memory leaks with this kind of behavior. When I do it, I want to take the time to do it right.
+But wait, that's not JSON! Yea, erring on the side of using out of the box behavior instead of building this out. It's easy to create memory leaks with this kind of behavior. When I do it, I want to take the time to do it right.
 
 ## Levels
 
@@ -170,9 +170,9 @@ __NOTE:__ Statements clone data being output, to avoid filters manipulating your
 
 While filters can be declared globally on the LoggerService, you can override or provide specific filters when `calling LoggerService.named()`. There is an optional 2nd argument that takes a list of filters.
 
-### Credit Card Filetering
+### Credit Card Filtering
 
-Looks for numbers that 'look' like a credit card. Checks both `data` and `msg` of a `LoggerStatement`. Any value found that is suspected of being a credit card value it is replaced with `>>> REDACTED <<<`.
+Looks for numbers that 'look' like a credit card. Checks both `data` and `msg` of a `LoggerStatement`. Any value found that is suspected of being a credit card value is replaced with `>>> REDACTED <<<`.
 
 ```
 import { LoggerService, CreditCardLoggerFilter } from '@mu-ts/logger';
