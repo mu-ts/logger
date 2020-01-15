@@ -1,40 +1,19 @@
 /* Reference: https://www.typescriptlang.org/docs/handbook/compiler-options.html */
 {
   "compilerOptions": {
-    "preserveConstEnums": true,
-    "strictNullChecks": true,
-    /* Provide full support for iterables in for..of, spread and 
-       destructuring when targeting ES5 or ES3. */
-    "downlevelIteration": true,
-    /* Allow default imports from modules with no default export. Which
-       does not impact code emit, just typechecking. */
-    "allowSyntheticDefaultImports": true,
-    /* Enable strict checking of function types. */
-    "strictFunctionTypes": true,
-    /* Forces 'this' to be qualified to a type. */
-    "noImplicitThis": true,
-    /* Add 'use strict' to all generated files.*/
-    "alwaysStrict": true,
-    /* Enables emit interoperability between CommonJS and ES Modules
-    via creaiton of namespace objects for all imports.
-    Implies: allowSyntheticDefaultImports*/
-    "esModuleInterop": true,
-    /* Allows importing JSON files. */
-    "resolveJsonModule": true,
-    /* Raise error on expression and declartion with an implied 'any' rather than
-    having any defined as the type. */
-    "noImplicitAny": true,
-    /* Enables @decorator annotaitons on class, parameters, 
-    properties and functions.*/
     "experimentalDecorators": true,
     "declaration": true,
-    "lib": ["es2017"],
-    "target": "es2017",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "lib": ["ES2016"],
+    "target": "ES2016",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "rootDir": "./",
-    "outDir": "./dist",
-    "types": ["node", "bunyan"]
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "types": ["node"]
   },
   "exclude": ["node_modules", "*.spec/**/*.spec.ts"],
   "include": ["src/**/*"]

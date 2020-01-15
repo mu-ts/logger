@@ -1,17 +1,23 @@
-import { Logger } from './Logger';
-import { inOut } from './inOut';
-import { LogLevelString } from './LogLevelString';
+import { Logger } from './interfaces/Logger';
+import { LoggerConfig } from './interfaces/LoggerConfig';
+import { LogLevelString } from './interfaces/LogLevelString';
+import { LoggerFactory } from './interfaces/LoggerFactory';
+import { LoggerFilter } from './interfaces/LoggerFilter';
 import { LoggerService } from './LoggerService';
+import { inOut } from './decorators/inOut';
+import { duration } from './decorators/duration';
+import { CreditCardLoggerFilter } from './filters/CreditCardLoggerFilter';
+import { SensitiveNameLoggerFilter } from './filters/SensitiveNameLoggerFilter';
 
-export { Logger, LoggerService, LogLevelString, inOut };
-
-LoggerService.defaultLogger().info(
-  {
-    memory: process.env['AWS_LAMBDA_FUNCTION_MEMORY_SIZE'],
-    version: process.env['AWS_LAMBDA_FUNCTION_VERSION'],
-    region: process.env['AWS_REGION'],
-    runtime: process.env['AWS_LAMBDA_RUNTIME_API'],
-    handler: process.env['_HANDLER'],
-  },
-  'init'
-);
+export {
+  Logger,
+  LoggerConfig,
+  LogLevelString,
+  LoggerFactory,
+  LoggerService,
+  LoggerFilter,
+  inOut,
+  duration,
+  CreditCardLoggerFilter,
+  SensitiveNameLoggerFilter,
+};

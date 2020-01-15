@@ -1,23 +1,39 @@
-import * as Bunyan from 'bunyan';
-import { LogLevelString } from './LogLevelString';
-import { Logger } from './index';
-import { DefaultLevels } from './DefaultLevels';
+import { LogLevelString, LoggerFilter, LoggerConfig, Logger, LoggerFactory } from './index';
+import { DefaultLevels } from './interfaces/DefaultLevels';
+import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
 
+/**
+ * All 'original' logger should be created from this service. It will ensure that when
+ * they are created the proper level is assigned to them, from defaults and environment
+ * variables.
+ */
 export class LoggerService {
+  private static readonly DEFAULT_LEVEL_NAME: string = 'default_level';
   private static cache: { [key: string]: Logger } = {};
-  private static defaultLevels: DefaultLevels = LoggerService.getDefaultLevels();
-  private static bunyanLogger: Bunyan = Bunyan.createLogger({
-    name: process.env['AWS_LAMBDA_FUNCTION_NAME'] || 'defaulty',
-    level: LoggerService.defaultLevels['default_level'],
-  });
+  private static defaultLevels: DefaultLevels | undefined;
+  private static loggerFactory: LoggerFactory | undefined;
+  private static filters?: LoggerFilter[] | undefined;
 
   private constructor() {}
 
   /**
-   * Convenience method for getting a console logger instance.
+   *
+   * @param filter will look at the value, attributes or contents of a statement and
+   *               remove or replace (redact) it. This is used to avoid leaking sensitive
+   *               data like passwords, credit cards or sercets.
    */
-  public static defaultLogger(): Logger {
-    return this.bunyanLogger;
+  public static registerFilter(filter: LoggerFilter): void {
+    if (!this.filters) this.filters = [];
+    this.filters.push(filter);
+  }
+
+  /**
+   *
+   * @param loggerFactory to use when creating new logger instances.
+   */
+  public static setLoggerFactory(loggerFactory: LoggerFactory) {
+    if (!loggerFactory.newLogger) throw new Error('Logger factory is invalid.');
+    this.loggerFactory = loggerFactory;
   }
 
   /**
@@ -25,50 +41,95 @@ export class LoggerService {
    * @param level to define on the default logger.
    */
   public static setLevel(level: LogLevelString): void {
+    if (!this.defaultLevels) this.defaultLevels = this.getDefaultLevels();
     this.defaultLevels.default_level = level;
-    this.bunyanLogger.level(level);
   }
 
   /**
    *
-   * @param component to define on each child logging statement.
-   * @param optional attributes to attach to the logging instance.
+   * @return default level of all created loggers.
    */
-  public static named(component: string, options?: { [key: string]: string }): Logger {
-    let logger: Logger | undefined = this.cache[component.toLowerCase()];
+  public static getLevel(): LogLevelString {
+    if (!this.defaultLevels) this.defaultLevels = this.getDefaultLevels();
+    return this.defaultLevels.default_level;
+  }
+
+  /**
+   * Creates a named logger instance.
+   *
+   * @param name to grant this logger.
+   * @param options optional attributes to attach to the logging instance.
+   */
+  public static named(_options: string | LoggerConfig, filters?: LoggerFilter[]): Logger {
+    const options: LoggerConfig = typeof _options === 'string' ? { name: _options } : _options;
+    const name: string = options.name;
+
+    if (!name) {
+      throw new Error('A named logger requires a name as a part of the LoggerConfig.');
+    }
+
+    const safeName: string = name.toLowerCase();
+    const defaultLevels: DefaultLevels = this.getDefaultLevels();
+
+    /**
+     * *** LEVEL **** ------>
+     * Figure out what level to use for this logger. Only use environment configuration
+     * if a level is not hard coded. If, an environment value is provided with an
+     * exclamation point on the name, then override.
+     */
+    let level: LogLevelString | undefined = options.level;
+
+    if (defaultLevels[`!${safeName}`]) level = defaultLevels[`!${safeName}`];
+    if (!level && defaultLevels[safeName]) level = defaultLevels[safeName];
+    if (!level) level = defaultLevels[this.DEFAULT_LEVEL_NAME] || 'info';
+
+    /**
+     * *** LEVEL **** <------
+     */
+
+    let logger: Logger | undefined = this.cache[safeName];
 
     if (!logger) {
-      logger = this.bunyanLogger.child({
-        ...(options || {}),
-        ...{ component },
-      });
-
-      if (options && options.level) {
-        logger.level(options.level as LogLevelString);
-      } else if (this.defaultLevels[component.toLowerCase()]) {
-        logger.level(this.defaultLevels[component.toLowerCase()]);
+      /**
+       * Default to the lightweight internal logger factory implementation.
+       */
+      if (!this.loggerFactory) {
+        this.loggerFactory = new ConsoleLoggerFactory();
       }
 
-      this.cache[component.toLowerCase()] = logger;
+      logger = this.loggerFactory.newLogger({ name, level, adornments: options.adornments }, filters || this.filters);
+
+      this.cache[safeName] = logger;
+    }
+
+    /**
+     * Sets, or re-sets, the logging level for the logger.
+     */
+    if (logger.getLevel() !== level) {
+      logger.setLevel(level);
     }
 
     return logger;
   }
 
   /**
-   * Generates derault logging levels for
+   * Generates default logging levels for known values
+   * in the LOG_LEVEL process.env attribute.
    */
   private static getDefaultLevels(): DefaultLevels {
-    const staticConfig: string = process.env.LOG_LEVEL || 'info';
-    const configs: string[] = staticConfig.split(';');
-    const levels: DefaultLevels = {
-      default_level: configs.shift() as LogLevelString,
-    };
+    if (!this.defaultLevels) {
+      const staticConfig: string = process.env.LOG_LEVEL || 'info';
+      const configs: string[] = staticConfig.split(';').filter((level: string | undefined) => !!level || level !== '');
+      this.defaultLevels = {
+        default_level: configs.shift() as LogLevelString,
+      };
 
-    for (const config of configs) {
-      const parts: string[] = config.split(' ');
-      levels[parts[0].toLowerCase()] = parts[1] as LogLevelString;
+      for (const config of configs) {
+        const parts: string[] = config.split(' ');
+        this.defaultLevels[parts[0].toLowerCase()] = parts[1] as LogLevelString;
+      }
     }
-    return levels;
+
+    return this.defaultLevels;
   }
 }
