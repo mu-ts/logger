@@ -148,7 +148,7 @@ Pretty standard here, highest level is fatal, lowest (most detailed) is trace. L
 * error `isError()` `error(...params)`
 * fatal `isFatal()` `fatal(...params)`
 
-For the default logger, each of tehse levels will use a different output method to take advantage of some of the built in functionality of `console`. So trace, debug and info are all reported using `console.log`, warn is reported using `console.warn` and then error and fatal are reported using `console.error`.
+For the default logger, each of these levels will use a different output method to take advantage of some of the built in functionality of `console`. So trace, debug and info are all reported using `console.log`, warn is reported using `console.warn` and then error and fatal are reported using `console.error`.
 
 ## Filters
 
