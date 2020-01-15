@@ -5,6 +5,7 @@ import { LoggerStatement } from '../interfaces/LoggerStatement';
 export class ConsoleLogger implements Logger {
   private readonly name: string;
   private readonly loggerFactory: LoggerFactory;
+  private readonly adornments: { [key: string]: string } | undefined;
   private level: LogLevelString;
   private filters: LoggerFilter[] | undefined;
 
@@ -13,6 +14,7 @@ export class ConsoleLogger implements Logger {
     if (!options.name) throw new Error('Name must be provied in the options for a new ConsoleLogger.');
     this.name = options.name;
     this.level = options.level || 'info';
+    this.adornments = options.adornments;
     this.filters = filters;
   }
 
@@ -21,8 +23,9 @@ export class ConsoleLogger implements Logger {
    * @param options to create the child logger with. If only a string is provided the
    *        parents logging level is used.
    */
-  public child(options: string | LoggerConfig): Logger {
-    const childName: string = typeof options === 'string' ? options : (options as LoggerConfig).name || 'child';
+  public child(_options: string | LoggerConfig): Logger {
+    const options: LoggerConfig = typeof _options === 'string' ? { name: _options } : _options;
+    const childName: string = options.name || `${this.name}.child`;
     return this.loggerFactory.newLogger({
       name: `${this.name}.${childName}`,
       level: typeof options !== 'string' ? options.level || this.level : this.level,
@@ -184,10 +187,22 @@ export class ConsoleLogger implements Logger {
     statement.level = level;
 
     /**
-     * If a deep clone is not done of the objects then there is a risk of
-     * modifying a logged object during filtering of logged out data.
+     * Force attributes on the statement output, that are defined as adornments to the logging
+     * statement. This violates the LoggerStatement interface, by design, as the interface is
+     * defined as the 'standard' LoggerStatement and adornments are there as static values
+     * to attach to each statement as an additional marker. I dont want to explicitly open
+     * up the LoggerStatement interface to allow any possible value, as it will become a
+     * meaningless interface.
      */
+    if (this.adornments) {
+      Object.keys(this.adornments).forEach((key: string) => ((statement as any)[key] = this.adornments[key]));
+    }
+
     if (statement.data || statement.msg) {
+      /**
+       * If a deep clone is not done of the objects then there is a risk of
+       * modifying a logged object during filtering of logged out data.
+       */
       if (statement.data) statement.data = this.deepCopy(statement.data);
       if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
     }

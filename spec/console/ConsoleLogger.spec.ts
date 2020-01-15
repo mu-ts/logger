@@ -56,7 +56,6 @@ describe('ConsoleLogger', () => {
       const loggerName: string = `tester.${level}`;
       logger = new ConsoleLogger({ name: loggerName, level }, mockLoggerFactory);
       expect(logger).to.not.be.undefined;
-      expect(logger).to.have.all.keys('level', 'loggerFactory', 'name', 'filters');
       expect(logger)
         .to.have.property('name')
         .that.equals(loggerName);

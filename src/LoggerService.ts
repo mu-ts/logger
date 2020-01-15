@@ -58,8 +58,9 @@ export class LoggerService {
    * @param name to grant this logger.
    * @param options optional attributes to attach to the logging instance.
    */
-  public static named(options: string | LoggerConfig, filters?: LoggerFilter[]): Logger {
-    const name = typeof options === 'string' ? options : options.name;
+  public static named(_options: string | LoggerConfig, filters?: LoggerFilter[]): Logger {
+    const options: LoggerConfig = typeof _options === 'string' ? { name: _options } : _options;
+    const name: string = options.name;
 
     if (!name) {
       throw new Error('A named logger requires a name as a part of the LoggerConfig.');
@@ -67,14 +68,12 @@ export class LoggerService {
 
     const safeName: string = name.toLowerCase();
 
-    let level: LogLevelString | undefined;
-
     /**
-     * Get the log level to use for the logger.
+     * *** LEVEL **** ------>
+     * Figure out what level to use for this logger. Use the provided
+     * level with overrides from default values (from environment).
      */
-    if (options && typeof options !== 'string' && options.level && options.level) {
-      level = options.level;
-    }
+    let level: LogLevelString | undefined = options.level;
 
     if (this.defaultLevels[safeName]) {
       level = this.defaultLevels[safeName];
@@ -83,6 +82,10 @@ export class LoggerService {
     }
 
     if (!level) level = 'info';
+
+    /**
+     * *** LEVEL **** <------
+     */
 
     let logger: Logger | undefined = this.cache[safeName];
 
@@ -94,7 +97,7 @@ export class LoggerService {
         this.loggerFactory = new ConsoleLoggerFactory();
       }
 
-      logger = this.loggerFactory.newLogger({ name, level }, filters || this.filters);
+      logger = this.loggerFactory.newLogger({ name, level, adornments: options.adornments }, filters || this.filters);
 
       this.cache[safeName] = logger;
     }

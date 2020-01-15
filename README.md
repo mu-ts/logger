@@ -28,7 +28,7 @@ export class ClassX {
   private logger: Logger;
 
   constructor() {
-    this.logger = LoggerService.named('ClassX');
+    this.logger = LoggerService.named({ name:'ClassX', adornments: {'foo':'bar'} }); // or simply LoggerService.named('ClassX');
   }
 
   @duration() // What dis?
@@ -62,11 +62,15 @@ doAThing();
 
 ```
 
+## Adornments
+
+Fancy word  to say you can provide a set of static attributes that will be applied to every output statement. This can be useful when you need to add a static value to each log statement for a logger, or set of loggers.
+
 ## Decorators
 
 We have two decorators that can help provide a bit more traceability to your logging, `@inOut` and `@duration`.
 
-### @inOut({level, name})
+### @inOut({level})
 
 This decorator can be placed on a function to record each time it is executed. By default it logs at trace level, as the amount of logging can be quite verbose and detailed. 
 
@@ -127,7 +131,7 @@ In the case of async functions, you will see 3 output statements as an additiona
 }
 ```
 
-### @duration({level, name})
+### @duration()
 
 This decorator will tell you the amount of time it takes for your function to execute. If this is an async function, it will be the amount of time until the promise resolves, not the amount of time to return the promise.
 
