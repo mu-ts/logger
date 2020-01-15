@@ -10,7 +10,7 @@ import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
 export class LoggerService {
   private static readonly DEFAULT_LEVEL_NAME: string = 'default_level';
   private static cache: { [key: string]: Logger } = {};
-  private static defaultLevels: DefaultLevels = LoggerService.getDefaultLevels();
+  private static defaultLevels: DefaultLevels | undefined;
   private static loggerFactory: LoggerFactory | undefined;
   private static filters?: LoggerFilter[] | undefined;
 
@@ -41,6 +41,7 @@ export class LoggerService {
    * @param level to define on the default logger.
    */
   public static setLevel(level: LogLevelString): void {
+    if (!this.defaultLevels) this.defaultLevels = this.getDefaultLevels();
     this.defaultLevels.default_level = level;
   }
 
@@ -49,6 +50,7 @@ export class LoggerService {
    * @return default level of all created loggers.
    */
   public static getLevel(): LogLevelString {
+    if (!this.defaultLevels) this.defaultLevels = this.getDefaultLevels();
     return this.defaultLevels.default_level;
   }
 
@@ -67,21 +69,19 @@ export class LoggerService {
     }
 
     const safeName: string = name.toLowerCase();
+    const defaultLevels: DefaultLevels = this.getDefaultLevels();
 
     /**
      * *** LEVEL **** ------>
-     * Figure out what level to use for this logger. Use the provided
-     * level with overrides from default values (from environment).
+     * Figure out what level to use for this logger. Only use environment configuration
+     * if a level is not hard coded. If, an environment value is provided with an
+     * exclamation point on the name, then override.
      */
     let level: LogLevelString | undefined = options.level;
 
-    if (this.defaultLevels[safeName]) {
-      level = this.defaultLevels[safeName];
-    } else if (!level) {
-      level = this.defaultLevels[this.DEFAULT_LEVEL_NAME];
-    }
-
-    if (!level) level = 'info';
+    if (defaultLevels[`!${safeName}`]) level = defaultLevels[`!${safeName}`];
+    if (!level && defaultLevels[safeName]) level = defaultLevels[safeName];
+    if (!level) level = defaultLevels[this.DEFAULT_LEVEL_NAME] || 'info';
 
     /**
      * *** LEVEL **** <------
@@ -117,17 +117,19 @@ export class LoggerService {
    * in the LOG_LEVEL process.env attribute.
    */
   private static getDefaultLevels(): DefaultLevels {
-    const staticConfig: string = process.env.LOG_LEVEL || 'info';
-    const configs: string[] = staticConfig.split(';');
-    const levels: DefaultLevels = {
-      default_level: configs.shift() as LogLevelString,
-    };
+    if (!this.defaultLevels) {
+      const staticConfig: string = process.env.LOG_LEVEL || 'info';
+      const configs: string[] = staticConfig.split(';').filter((level: string | undefined) => !!level || level !== '');
+      this.defaultLevels = {
+        default_level: configs.shift() as LogLevelString,
+      };
 
-    for (const config of configs) {
-      const parts: string[] = config.split(' ');
-      levels[parts[0].toLowerCase()] = parts[1] as LogLevelString;
+      for (const config of configs) {
+        const parts: string[] = config.split(' ');
+        this.defaultLevels[parts[0].toLowerCase()] = parts[1] as LogLevelString;
+      }
     }
 
-    return levels;
+    return this.defaultLevels;
   }
 }

@@ -7,7 +7,7 @@
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "scripts": {
-    "build": "npm run clean && tsc -p .",
+    "build": "tsc -p .",
     "test": "nyc mocha --require ts-node/register \"spec/**/*.spec.ts\"",
     "coverage": "nyc report --reporter text-summary",
     "coverage-export": "nyc report --reporter=text-lcov > coverage.lcov",

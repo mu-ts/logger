@@ -13,7 +13,7 @@ This logging framework aims to be a good enough logging framework where being li
 * Data filtering, to redact sensitive data like credit cards, secrets or passwords.
 * Console based logging.
 * Outputs JSON for easier parsing.
-* Environment overrides for log level, default value and by named logger. `LOG_LEVEL=info;mylogger trace;`
+* Environment configuration for log level, default value and by named logger. Optional override if ! is present in front of class name. `LOG_LEVEL=info;mylogger trace;!myOverride warn`
 
 ## Usage
 
@@ -65,6 +65,14 @@ doAThing();
 ## Adornments
 
 Fancy word  to say you can provide a set of static attributes that will be applied to every output statement. This can be useful when you need to add a static value to each log statement for a logger, or set of loggers.
+
+NOTE: Adornments do not apply to decorators, at this time.
+
+## LOG_LEVEL
+
+`LOG_LEVEL` is looked for on `process.env`, and when found, used to defined default log levels when hard coded values are not provided for loggers. However, you can ptionally override a hard coded value if you add a ! in front of the name of a specific named logger. In this case, it will override hard coded values and set it to the value defined.
+
+For the name of each logger, any string is valid. All values are stored lower case so dont expect mixed case to provide different loggers.
 
 ## Decorators
 
