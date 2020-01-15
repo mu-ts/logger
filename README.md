@@ -137,7 +137,7 @@ Example: `X.duration.doASync: 0.366ms`
 
 But wait, that's not JSON! Yea, erring on the side of using out of the box behavior instead of build this out. It's easy to create memory leaks with this kind of behavior. When I do it, I want to take the time to do it right.
 
-## Level's
+## Levels
 
 Pretty standard here, highest level is fatal, lowest (most detailed) is trace. Lowest to highest they are all listed below.
 
