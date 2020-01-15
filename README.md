@@ -129,7 +129,7 @@ In the case of async functions, you will see 3 output statements as an additiona
 
 ### @duration({level, name})
 
-So this decorator will tell you the amount of time it takes for your function to execute. If this is an async function, it will be the amount of time util the promise resolves, not the amount of time to return the promise.
+This decorator will tell you the amount of time it takes for your function to execute. If this is an async function, it will be the amount of time until the promise resolves, not the amount of time to return the promise.
 
 Default implementation outputs values using `console.timeEnd()` the name is assembled together using the logger name, 'duration' and function name.
 
