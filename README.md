@@ -139,7 +139,7 @@ But wait, that's not JSON! Yea, erring on the side of using out of the box behav
 
 ## Levels
 
-Pretty standard here, highest level is fatal, lowest (most detailed) is trace. Lowest to highest they are all listed below.
+Pretty standard here, highest level is fatal, lowest (most detailed) is trace. Levels listed below from lowest to highest:
 
 * trace `isTrace()` `trace(...params)`
 * debug `isDebug()` `debug(...params)`
