@@ -135,7 +135,7 @@ Default implementation outputs values using `console.timeEnd()` the name is asse
 
 Example: `X.duration.doASync: 0.366ms`
 
-But wait, thats not JSON! Yea, err'ing on the side of using out of the box behavior instead of build this out. Its easy to create memory leaks with this kind of behavior. When I do it, I want to take the time to do it right.
+But wait, that's not JSON! Yea, erring on the side of using out of the box behavior instead of build this out. It's easy to create memory leaks with this kind of behavior. When I do it, I want to take the time to do it right.
 
 ## Level's
 
