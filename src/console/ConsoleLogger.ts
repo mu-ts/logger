@@ -1,7 +1,6 @@
 import { Logger, LogLevelString, LoggerFactory, LoggerFilter } from '../index';
 import { LoggerConfig } from '../interfaces/LoggerConfig';
 import { LoggerStatement } from '../interfaces/LoggerStatement';
-import { ConsoleLoggerFactory } from './ConsoleLoggerFactory';
 
 export class ConsoleLogger implements Logger {
   private readonly name: string;
@@ -219,18 +218,3 @@ export class ConsoleLogger implements Logger {
     return JSON.parse(JSON.stringify(target));
   }
 }
-
-const consoleLoggerFactory = new ConsoleLoggerFactory();
-const consoleLogger = new ConsoleLogger({ name: 'is.check' }, consoleLoggerFactory);
-/*
-  private testing(): any {
-    const error: Error = new Error('I am an error');
-    console.log(error.message);
-  }
- */
-const error: Error = new Error('I am an error');
-console.log('------->1');
-console.log(error.message);
-consoleLogger.error(error);
-console.log('------->2');
-console.log(error.message);
