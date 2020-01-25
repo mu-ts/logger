@@ -107,23 +107,23 @@ export class ConsoleLogger implements Logger {
      */
     switch (level) {
       case 'trace':
-        if (this.isTrace()) console.log(this.toStatement(level, ...params));
+        if (this.isTrace()) console.debug(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
       case 'debug':
-        if (this.isDebug()) console.log(this.toStatement(level, ...params));
+        if (this.isDebug()) console.debug(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
       case 'info':
-        if (this.isInfo()) console.log(this.toStatement(level, ...params));
+        if (this.isInfo()) console.log(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
       case 'warn':
-        if (this.isWarn()) console.warn(this.toStatement(level, ...params));
+        if (this.isWarn()) console.warn(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
       case 'error':
-        if (this.isError()) console.error(this.toStatement(level, ...params));
+        if (this.isError()) console.error(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
       case 'fatal':
       default:
-        if (this.isFatal()) console.error(this.toStatement(level, ...params));
+        if (this.isFatal()) console.error(ConsoleLogger.toString(this.toStatement(level, ...params)));
         break;
     }
   }
@@ -161,11 +161,20 @@ export class ConsoleLogger implements Logger {
         }
 
         if (param instanceof Error) {
-          if (!accumulator.err) accumulator.err = param;
+          const anError = {
+            ...{
+              type: param.constructor.name,
+              message: param.message,
+              stack: param.stack,
+            },
+            ...param,
+          };
+          if (!accumulator.err) accumulator.err = anError;
           else if (accumulator.err) {
-            accumulator.errs = [accumulator.err, param];
+            accumulator.errs = [accumulator.err, anError];
+            delete accumulator.err;
           } else if (accumulator.errs) {
-            accumulator.errs.push(param);
+            accumulator.errs.push(anError);
           }
         } else if (typeof param === 'object') {
           if (!accumulator.data) accumulator.data = {};
@@ -216,5 +225,9 @@ export class ConsoleLogger implements Logger {
      * algorithm if a performance issue is located with it.
      */
     return JSON.parse(JSON.stringify(target));
+  }
+
+  private static toString(statement: LoggerStatement): string {
+    return JSON.stringify(statement, null, 2);
   }
 }

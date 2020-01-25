@@ -9,9 +9,11 @@ import { LoggerStatement } from '../../src/interfaces/LoggerStatement';
 describe('ConsoleLogger', () => {
   let logger: ConsoleLogger | undefined;
   let mockLoggerFactory: MockLoggerFactory;
+  let debugOutput: any[];
   let logOutput: any[];
   let warnOutput: any[];
   let errorOutput: any[];
+  let consoleDebugRef: any;
   let consoleLogRef: any;
   let consoleWarnRef: any;
   let consoleErrorRef: any;
@@ -24,14 +26,19 @@ describe('ConsoleLogger', () => {
 
   beforeEach(() => {
     mockLoggerFactory = new MockLoggerFactory();
+    consoleDebugRef = console.debug;
     consoleLogRef = console.log;
     consoleWarnRef = console.warn;
     consoleErrorRef = console.error;
 
+    debugOutput = [];
     logOutput = [];
     warnOutput = [];
     errorOutput = [];
 
+    console.debug = (...args: any[]) => {
+      args.forEach((param: any) => debugOutput.push(param));
+    };
     console.log = (...args: any[]) => {
       args.forEach((param: any) => logOutput.push(param));
     };
@@ -44,6 +51,7 @@ describe('ConsoleLogger', () => {
   });
 
   afterEach(() => {
+    console.debug = consoleDebugRef;
     console.log = consoleLogRef;
     console.warn = consoleWarnRef;
     console.error = consoleErrorRef;
@@ -304,6 +312,7 @@ describe('ConsoleLogger', () => {
 
   describe('log()', () => {
     beforeEach(() => {
+      debugOutput = [];
       logOutput = [];
       warnOutput = [];
       errorOutput = [];
@@ -323,17 +332,20 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'msg', 'name', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'msg', 'name', 'level');
+          expect(line)
             .to.have.property('msg')
             .that.equals(param);
-          expect(output[0])
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
@@ -413,20 +425,24 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'err', 'msg', 'name', 'level');
-          // expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'err', 'msg', 'name', 'level');
+          // expect(line)
           //   .to.have.property('msg')
           //   .that.equals(param.message);
-          expect(output[0])
+          expect(line)
             .to.have.property('err')
-            .that.equal(param);
-          expect(output[0])
+            .to.have.property('message')
+            .that.equal(param.message);
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
@@ -493,6 +509,145 @@ describe('ConsoleLogger', () => {
       });
     });
 
+    describe('multiple Error()', () => {
+      const testError = (
+        error1: string | Error | any,
+        error2: string | Error | any,
+        atLevel: LogLevelString,
+        shouldShow: boolean,
+        level?: LogLevelString
+      ) => {
+        logger = new ConsoleLogger({ name: 'is.check', level }, mockLoggerFactory);
+        logger.log(atLevel, error1, error2);
+
+        let output: any[];
+
+        if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
+        else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
+        else output = logOutput;
+
+        if (!shouldShow) {
+          expect(output.length).to.equal(0);
+        } else {
+          expect(output.length).to.equal(1);
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'errs', 'msg', 'name', 'level');
+          expect(line)
+            .to.have.property('level')
+            .that.equals(atLevel);
+          expect(line)
+            .to.have.property('errs')
+            .to.have.property('length')
+            .that.equals(2);
+          const errs = line.errs;
+          expect(errs[0])
+            .to.have.property('message')
+            .that.equal(error1.message);
+          expect(errs[1])
+            .to.have.property('message')
+            .that.equal(error2.message);
+        }
+      };
+
+      describe('trace ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'trace', false, 'fatal'));
+      });
+
+      describe('debug message ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', false));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', true, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', false, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', false, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', false, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'debug', false, 'fatal'));
+      });
+
+      describe('info message ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'info', true));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', true, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', true, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', false, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', false, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'info', false, 'fatal'));
+      });
+
+      describe('warn message ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', true));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', true, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', true, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', true, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', false, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'warn', false, 'fatal'));
+      });
+
+      describe('error message ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', true, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'error', false, 'fatal'));
+      });
+
+      describe('fatal message ', () => {
+        it('at default level', () => testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true));
+        it('at trace level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'trace'));
+        it('at debug level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'debug'));
+        it('at info level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'info'));
+        it('at warn level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'warn'));
+        it('at error level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'error'));
+        it('at fatal level', () =>
+          testError(new Error('Simple test.'), new Error('Simpler test'), 'fatal', true, 'fatal'));
+      });
+    });
+
     describe('an Object()', () => {
       class TestObject {
         constructor(public name: string, public age: number) {}
@@ -510,17 +665,20 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'data', 'name', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'data', 'name', 'level');
+          expect(line)
             .to.have.property('data')
             .that.eqls({ TestObject: { ...param } });
-          expect(output[0])
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
@@ -608,18 +766,21 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'data', 'name', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'data', 'name', 'level');
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
 
-          const testObjectFromData: any = output[0].data.TestObject;
+          const testObjectFromData: any = line.data.TestObject;
           expect(testObjectFromData)
             .to.have.property('name')
             .that.eqls('>>> REDACTED <<<');
@@ -664,20 +825,23 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'data', 'name', 'msg', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'data', 'name', 'msg', 'level');
+          expect(line)
             .to.have.property('data')
             .that.eqls({ TestObject: { ...param[1] } });
-          expect(output[0])
+          expect(line)
             .to.have.property('msg')
             .that.equals(param[0]);
-          expect(output[0])
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
@@ -760,20 +924,24 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'err', 'name', 'msg', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'err', 'name', 'msg', 'level');
+          expect(line)
             .to.have.property('err')
-            .that.equal(param[1]);
-          expect(output[0])
+            .to.have.property('message')
+            .that.equal(param[1].message);
+          expect(line)
             .to.have.property('msg')
             .that.equals(param[0]);
-          expect(output[0])
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
@@ -860,26 +1028,30 @@ describe('ConsoleLogger', () => {
 
         if (atLevel === 'fatal' || atLevel === 'error') output = errorOutput;
         else if (atLevel === 'warn') output = warnOutput;
+        else if (atLevel === 'debug' || atLevel === 'trace') output = debugOutput;
         else output = logOutput;
 
         if (!shouldShow) {
           expect(output.length).to.equal(0);
         } else {
           expect(output.length).to.equal(1);
-          expect(output[0]).to.have.keys('at', 'err', 'data', 'func', 'name', 'msg', 'level');
-          expect(output[0])
+          expect(output[0]).to.be.string;
+          const line = JSON.parse(output[0]);
+          expect(line).to.have.keys('at', 'err', 'data', 'func', 'name', 'msg', 'level');
+          expect(line)
             .to.have.property('func')
             .that.equals(param[0]);
-          expect(output[0])
+          expect(line)
             .to.have.property('msg')
             .that.equals(param[1]);
-          expect(output[0])
+          expect(line)
             .to.have.property('err')
-            .that.equal(param[2]);
-          expect(output[0])
+            .to.have.property('message')
+            .that.equal(param[2].message);
+          expect(line)
             .to.have.property('data')
             .that.eqls({ TestObject: { ...param[3] } });
-          expect(output[0])
+          expect(line)
             .to.have.property('level')
             .that.equals(atLevel);
         }
