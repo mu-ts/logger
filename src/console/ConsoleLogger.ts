@@ -6,7 +6,7 @@ export class ConsoleLogger implements Logger {
   private readonly name: string;
   private readonly loggerFactory: LoggerFactory;
   private readonly adornments: { [key: string]: string } | undefined;
-  private level: LogLevelString;
+  private _level: LogLevelString;
   private filters: LoggerFilter[] | undefined;
 
   constructor(options: LoggerConfig, loggerFactory: LoggerFactory, filters?: LoggerFilter[]) {
@@ -46,6 +46,14 @@ export class ConsoleLogger implements Logger {
 
   public setLevel(level: LogLevelString): void {
     this.level = level;
+  }
+
+  private set level(level: LogLevelString) {
+    this._level = level.toLowerCase() as LogLevelString;
+  }
+
+  private get level() {
+    return this._level;
   }
 
   public getLevel(): LogLevelString {
