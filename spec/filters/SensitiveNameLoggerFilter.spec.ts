@@ -11,7 +11,7 @@ describe('SensitiveNameLoggerFilter', () => {
   });
 
   describe('filter sensitive fields', () => {
-    const creditCardFilter: SensitiveNameLoggerFilter = new SensitiveNameLoggerFilter();
+    const sensitiveNameFilter: SensitiveNameLoggerFilter = new SensitiveNameLoggerFilter();
 
     it('but not message', () => {
       const statement: LoggerStatement = {
@@ -21,11 +21,11 @@ describe('SensitiveNameLoggerFilter', () => {
         msg: 'I have a credit card of 1234 5678 1234 1234',
       } as LoggerStatement;
 
-      creditCardFilter.filter(statement);
+      sensitiveNameFilter.filter(statement);
       expect(statement.msg).to.equal('I have a credit card of 1234 5678 1234 1234');
     });
 
-    it('if looks like credot card', () => {
+    it('if looks like credit card', () => {
       const statement: LoggerStatement = {
         at: new Date(),
         level: 'debug',
@@ -44,7 +44,7 @@ describe('SensitiveNameLoggerFilter', () => {
         },
       } as LoggerStatement;
 
-      creditCardFilter.filter(statement);
+      sensitiveNameFilter.filter(statement);
       expect(statement.msg).to.equal('Some message');
 
       const data: any = statement.data as any;
