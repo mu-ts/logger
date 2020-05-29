@@ -58,36 +58,22 @@ export class SensitiveNameLoggerFilter implements LoggerFilter {
   private redact(data: any): any {
     if (!data) return;
 
-    if (typeof data !== 'object' && this.isRedactable(String(data))) {
-      /**
-       * Look for a match, with a lower cased name, and with
-       * the name having all special characters removed.
-       */
-      return this.replaceValue;
-    }
-
     // iterate through the object properties
     const keys: string[] = Object.keys(data);
     keys.forEach((fieldName: string) => {
       const value: any = data[fieldName];
       if (!value) return;
-      if (typeof value === 'object') {
-        if (Array.isArray(value)) {
-          data[fieldName] = value.map((arrayItem: any) => this.redact(arrayItem));
-        } else {
-          data[fieldName] = this.redact(value);
-        }
-      } else {
-        if (this.isRedactable(fieldName)) {
-          /**
-           * Look for a match, with a lower cased name, and with
-           * the name having all special characters removed.
-           */
-          data[fieldName] = this.replaceValue;
-        }
+
+      if (this.isRedactable(fieldName)) {
+        /**
+         * Look for a match, with a lower cased name, and with
+         * the name having all special characters removed.
+         */
+        data[fieldName] = this.replaceValue;
+      } else if (typeof value === 'object') {
+        data[fieldName] = (Array.isArray(value)) ?  value.map((arrayItem: any) => this.redact(arrayItem)) : this.redact(value);
       }
     });
-
     return data;
   }
 

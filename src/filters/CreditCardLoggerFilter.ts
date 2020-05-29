@@ -3,7 +3,7 @@ import { LoggerStatement } from '../interfaces/LoggerStatement';
 
 /**
  * Credit card information leaking into logs is a big PCI risk. So
- * we agressively seek out data that looks like a CC number and redact it.
+ * we aggressively seek out data that looks like a CC number and redact it.
  */
 export class CreditCardLoggerFilter implements LoggerFilter {
   private readonly replaceValue: string = '>>> REDACTED <<<';
@@ -26,7 +26,7 @@ export class CreditCardLoggerFilter implements LoggerFilter {
     const keys: string[] = Object.keys(data);
     keys.forEach((fieldName: string) => {
       const value: any = data[fieldName];
-      if (!value) return;
+
       if (typeof value === 'object') {
         if (Array.isArray(value)) {
           data[fieldName] = [...value].map((arrayItem: any) => this.startRedacting(arrayItem));
@@ -34,17 +34,11 @@ export class CreditCardLoggerFilter implements LoggerFilter {
           data[fieldName] = this.startRedacting(value);
         }
       } else {
-        const lookoutKeys: string[] = ['body', 'rawBody'];
-        if (lookoutKeys.some(key => key === fieldName)) {
-          const obj: object = this.parseJSON(value);
-          data[fieldName] = obj ? JSON.stringify(this.startRedacting(obj)) : this.redact(String(value));
-        } else {
-          /**
-           * Look for a match, with a lower cased name, and with
-           * the name having all special characters removed.
-           */
-          data[fieldName] = this.redact(String(value));
-        }
+        /**
+         * Look for a match, with a lower cased name, and with
+         * the name having all special characters removed.
+         */
+        data[fieldName] = this.redact(String(value));
       }
     });
     return data;
@@ -59,19 +53,5 @@ export class CreditCardLoggerFilter implements LoggerFilter {
       .replace(this.BANK_DIGITS, this.replaceValue)
       .replace(this.CC_DIGITS, this.replaceValue)
       .replace(this.CC_DIGITS_SPACES, this.replaceValue);
-  }
-
-  /**
-   * Try to convert a JSON string into an object.
-   * @param str
-   */
-  private parseJSON(json: string): any {
-    try {
-      const obj: object = JSON.parse(json);
-      return !!obj && typeof obj === 'object' && obj;
-    } catch (e) {
-      /* ignore */
-    }
-    return false;
   }
 }
