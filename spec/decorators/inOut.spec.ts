@@ -29,7 +29,8 @@ describe('@inOut', () => {
   describe('on synchronous functions', () => {
     const testSynchronous = (level?: LogLevelString) => {
       const functionName: string = 'doSync';
-      const doInOut: Function = inOut({ atLevel: level });
+      const config = (level) ? { atLevel: level } : undefined;
+      const doInOut: Function = inOut(config);
       const descriptor: PropertyDescriptor = doInOut(
         TestClass.prototype,
         functionName,
@@ -98,7 +99,8 @@ describe('@inOut', () => {
   describe('on an asynchronous functions', () => {
     const testASynchronous = async (level?: LogLevelString) => {
       const functionName: string = 'doASync';
-      const doInOut: Function = inOut({ atLevel: level });
+      const config = (level) ? { atLevel: level } : undefined;
+      const doInOut: Function = inOut(config);
       const descriptor: PropertyDescriptor = doInOut(
         TestClass.prototype,
         functionName,

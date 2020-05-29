@@ -12,25 +12,33 @@ export class SensitiveNameLoggerFilter implements LoggerFilter {
     'credit card',
     'credit-card',
     'creditcard',
+    'creditCard',
+    'card number',
     'card-number',
     'cardnumber',
+    'cardNumber',
     'credit card number',
     'credit-card-number',
     'creditcard-number',
     'credit-cardnumber',
     'creditcardnumber',
+    'account number',
     'account-number',
     'accountnumber',
+    'accountNumber',
     'bank account',
     'bank-account',
     'bankaccount',
+    'bankAccount',
     'bank account number',
     'bank-account-number',
     'bank-accountnumber',
     'bankaccount-number',
     'bankaccountnumber',
+    'routing number',
     'routing-number',
     'routingnumber',
+    'routingNumber',
     'pass',
     'password',
     'secret',
@@ -48,31 +56,29 @@ export class SensitiveNameLoggerFilter implements LoggerFilter {
   }
 
   private redact(data: any): any {
-    const keys: string[] = Object.keys(data);
+    if (!data) return;
 
+    // iterate through the object properties
+    const keys: string[] = Object.keys(data);
     keys.forEach((fieldName: string) => {
       const value: any = data[fieldName];
       if (!value) return;
-      if (typeof value === 'object') {
-        if (Array.isArray(value)) {
-          data[fieldName] = value.map((arrayItem: any) => this.redact(arrayItem));
-        } else {
-          data[fieldName] = this.redact(value);
-        }
-      } else {
-        if (
-          this.dangerousFieldNames.includes(fieldName.toLocaleLowerCase()) ||
-          this.dangerousFieldNames.includes(fieldName.replace(/[^\w\s]/gi, '').toLocaleLowerCase())
-        ) {
-          /**
-           * Look for a match, with a lower cased name, and with
-           * the name having all special characters removed.
-           */
-          data[fieldName] = this.replaceValue;
-        }
+
+      if (this.isRedactable(fieldName)) {
+        /**
+         * Look for a match, with a lower cased name, and with
+         * the name having all special characters removed.
+         */
+        data[fieldName] = this.replaceValue;
+      } else if (typeof value === 'object') {
+        data[fieldName] = (Array.isArray(value)) ?  value.map((arrayItem: any) => this.redact(arrayItem)) : this.redact(value);
       }
     });
-
     return data;
+  }
+
+  private isRedactable(fieldName: string): boolean {
+    return this.dangerousFieldNames.includes(fieldName.toLocaleLowerCase()) ||
+      this.dangerousFieldNames.includes(fieldName.replace(/[^\w\s]/gi, '').toLocaleLowerCase());
   }
 }
