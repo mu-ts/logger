@@ -16,7 +16,7 @@ deploy:
   - provider: releases
     api_key: $GITHUB_TOKEN
     file_glob: true
-    file: "mu-ts-sns-*.tgz"
+    file: "mu-ts-logger-*.tgz"
     skip_cleanup: true
     on:
       tags: true
