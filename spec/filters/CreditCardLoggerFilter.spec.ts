@@ -373,6 +373,7 @@ describe('CreditCardLoggerFilter', () => {
                   e: {
                     test: {
                       body: 'just a string value',
+                      rawBody: '{\n    "type": "CreditCard",\n    "nameOnCard": "Transactions Creditcard Created",\n    "cardNumber": "4111 1111 1111 1111",\n    "expirationMonth": 1,\n    "expirationYear": 2031,\n    "streetAddress": "Yeaff Rd.",\n    "zipCode": "90042"\n}',
                     },
                     body: '{\n    "type": "CreditCard",\n    "nameOnCard": "Transactions Creditcard Created",\n    "cardNumber": "4111111111111111",\n    "expirationMonth": 1,\n    "expirationYear": 2031,\n    "streetAddress": "Yeaff Rd.",\n    "zipCode": "90042"\n}',
                     rawBody: '{\n    "type": "CreditCard",\n    "nameOnCard": "Transactions Creditcard Created",\n    "cardNumber": "4111111111111111",\n    "expirationMonth": 1,\n    "expirationYear": 2031,\n    "streetAddress": "Yeaff Rd.",\n    "zipCode": "90042"\n}',
@@ -406,6 +407,7 @@ describe('CreditCardLoggerFilter', () => {
       const nestedData: any = data.a.b.c.d.e;
 
       expect(nestedData.test.body.includes('>>> REDACTED <<<')).to.be.false;
+      expect(nestedData.test.rawBody.includes('>>> REDACTED <<<')).to.be.true;
       expect(nestedData.body.includes('>>> REDACTED <<<')).to.be.true;
       expect(nestedData.rawBody.includes('>>> REDACTED <<<')).to.be.true;
       const pm = nestedData.cardArray.shift();
