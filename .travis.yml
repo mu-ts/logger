@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+  - 10
+
+before_script:
+  - npm install
+  - npm run build
+
+script:
+  - npm test
+
+after_success:
+  - npm pack
+
+deploy:
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file: "mu-ts-sns-*.tgz"
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: npm
+    skip_cleanup: true
+    email: "philip@strandedmusician.com"
+    api_key: $NPM_TOKEN
+    on:
+      tags: true
