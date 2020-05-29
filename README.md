@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/mu-ts/logger/workflows/Node.js%20CI/badge.svg)
+
 ### @mu-ts/logger
 # Simple lightweight logging.
 
