@@ -38,7 +38,7 @@ export class CreditCardLoggerFilter implements LoggerFilter {
          * Look for a match, with a lower cased name, and with
          * the name having all special characters removed.
          */
-        data[fieldName] = this.redact(String(value));
+        data[fieldName] = this.redact(value);
       }
     });
     return data;
@@ -49,7 +49,7 @@ export class CreditCardLoggerFilter implements LoggerFilter {
    * @param value
    */
   private redact(value: string): string {
-    return value
+    return String(value)
       .replace(this.BANK_DIGITS, this.replaceValue)
       .replace(this.CC_DIGITS, this.replaceValue)
       .replace(this.CC_DIGITS_SPACES, this.replaceValue);
