@@ -217,7 +217,7 @@ export class ConsoleLogger implements Logger {
        * modifying a logged object during filtering of logged out data.
        */
       if (statement.data) statement.data = this.deepCopy(statement.data);
-      if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
+      // if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
     }
 
     return statement;
@@ -232,7 +232,29 @@ export class ConsoleLogger implements Logger {
      * This is pretty heavy handed. We can update this to a more efficient
      * algorithm if a performance issue is located with it.
      */
-    return JSON.parse(JSON.stringify(target));
+
+    return JSON.parse(this.serialize<{[key: string]: any }>(target));
+  }
+
+  private serialize<T>(object: T): string {
+    const serialized: string = JSON.stringify(
+      object,
+      (name: string, value: any) => {
+        if (!this.filters) return value;
+        if (typeof value === "object"
+            || (typeof value !== "string" && typeof value !== "number")) return value;
+
+        let newValue = value;
+        for (const filter of this.filters) {
+          if (String(newValue).includes('REDACTED')) return newValue;
+          /* Filter out redacted fields. */
+          newValue = filter.redact({ fieldName: name, value: newValue });
+        }
+        return newValue;
+      },
+      undefined
+    );
+    return serialized;
   }
 
   private static toString(statement: LoggerStatement): string {
