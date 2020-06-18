@@ -1,6 +1,6 @@
 {
   "name": "@mu-ts/logger",
-  "version": "3.0.11",
+  "version": "3.0.12",
   "description": "Simple, lightweight and extendable logging.",
   "main": "./lib/index",
   "types": "./lib/index",
@@ -44,8 +44,8 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^11.15.15",
-    "aws-sdk": "^2.692.0",
+    "@types/node": "^11.15.16",
+    "aws-sdk": "^2.696.0",
     "chai": "^4.2.0",
     "codecov": "^3.7.0",
     "mocha": "^7.2.0",

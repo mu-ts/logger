@@ -41,6 +41,8 @@ export class SensitiveNameLoggerFilter implements LoggerFilter {
     'routingNumber',
     'pass',
     'password',
+    'pw',
+    'pwd',
     'secret',
     'shared secret',
     'shared-secret',

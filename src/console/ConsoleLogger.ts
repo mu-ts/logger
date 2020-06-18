@@ -11,7 +11,7 @@ export class ConsoleLogger implements Logger {
 
   constructor(options: LoggerConfig, loggerFactory: LoggerFactory, filters?: LoggerFilter[]) {
     this.loggerFactory = loggerFactory;
-    if (!options.name) throw new Error('Name must be provied in the options for a new ConsoleLogger.');
+    if (!options.name) throw new Error('Name must be provided in the options for a new ConsoleLogger.');
     this.name = options.name;
     this.level = options.level || 'info';
     this.adornments = options.adornments;
@@ -220,7 +220,8 @@ export class ConsoleLogger implements Logger {
       // if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
     }
 
-    return statement;
+    const { clazz, name, func, msg, data, at, ...rest } = statement;
+    return { clazz, name, func, msg, data, ...rest, at }; // re-order output for readability
   }
 
   /**
