@@ -1,10 +1,9 @@
 import 'mocha';
 import { randomBytes } from 'crypto';
 import { expect } from 'chai';
-import { LogLevelString } from '../../src/index';
+import { LoggerFilter, LogLevelString, ToRedact } from '../../src/index';
 import { ConsoleLogger } from '../../src/console/ConsoleLogger';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
-import { LoggerStatement } from '../../src/interfaces/LoggerStatement';
 
 describe('ConsoleLogger', () => {
   let logger: ConsoleLogger | undefined;
@@ -747,7 +746,7 @@ describe('ConsoleLogger', () => {
 
     describe('an Object() filtered without modifying it', () => {
       class TestObject {
-        constructor(public name: string, public age: number) {}
+        constructor(public name: string, public age: number, public test?: any) {}
       }
       const testObject = (
         param: string | Error | any,
@@ -755,11 +754,18 @@ describe('ConsoleLogger', () => {
         shouldShow: boolean,
         level?: LogLevelString
       ) => {
-        const filter = (logStatement: LoggerStatement) => {
-          if (logStatement.data) logStatement.data.TestObject.name = '>>> REDACTED <<<';
+        const TestFilter = class TestLoggerFilter implements LoggerFilter {
+          constructor() {}
+          // @ts-ignore
+          redact(toRedact: ToRedact): any {
+            const { value } = toRedact as ToRedact;
+            const strValue: string = String(value);
+            return strValue === 'redact this' ? '>>> REDACTED <<<' : strValue;
+          }
         };
+        const filters: LoggerFilter[] = [new TestFilter()];
 
-        logger = new ConsoleLogger({ name: 'is.check', level }, mockLoggerFactory, [{ filter }]);
+        logger = new ConsoleLogger({ name: 'is.check', level }, mockLoggerFactory, filters);
         logger.log(atLevel, param);
 
         let output: any[];
@@ -783,13 +789,15 @@ describe('ConsoleLogger', () => {
           const testObjectFromData: any = line.data.TestObject;
           expect(testObjectFromData)
             .to.have.property('name')
-            .that.eqls('>>> REDACTED <<<');
+            .that.eqls('Simple test.');
           expect(testObjectFromData)
             .to.have.property('age')
-            .that.eqls(param.age);
+            .that.eqls(String(param.age));
+          expect(testObjectFromData)
+            .to.have.property('test')
+            .that.eqls('>>> REDACTED <<<');
 
           /*  ORIGINAL Value should be same, as value redaction should not impact 'original' values. */
-
           expect(param)
             .to.have.property('name')
             .that.equals('Simple test.');
@@ -798,7 +806,8 @@ describe('ConsoleLogger', () => {
 
       describe('trace ', () => {
         it('at default level', () => testObject(new TestObject('Simple test.', 23), 'trace', false));
-        it('at trace level', () => testObject(new TestObject('Simple test.', 23), 'trace', true, 'trace'));
+        it('at trace level', () =>
+          testObject(new TestObject('Simple test.', 23, 'redact this'), 'trace', true, 'trace'));
         it('at debug level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'debug'));
         it('at info level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'info'));
         it('at warn level', () => testObject(new TestObject('Simple test.', 23), 'trace', false, 'warn'));

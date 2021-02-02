@@ -1,6 +1,6 @@
 {
   "name": "@mu-ts/logger",
-  "version": "3.0.10",
+  "version": "3.1.1",
   "description": "Simple, lightweight and extendable logging.",
   "main": "./lib/index",
   "types": "./lib/index",
@@ -42,19 +42,19 @@
     "url": "https://github.com/mu-ts/logger/issues"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.11",
+    "@types/chai": "^4.2.14",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^11.15.14",
-    "aws-sdk": "^2.688.0",
+    "@types/node": "^11.15.44",
+    "aws-sdk": "^2.834.0",
     "chai": "^4.2.0",
-    "codecov": "^3.7.0",
+    "codecov": "^3.8.1",
     "mocha": "^7.2.0",
     "nyc": "^15.1.0",
     "ts-mocha": "^7.0.0",
     "ts-node": "^8.10.2",
-    "tslint": "^6.1.2",
+    "tslint": "^6.1.3",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.7"
   },
   "dependencies": {},
   "nyc": {

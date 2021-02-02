@@ -21,7 +21,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
 
     descriptor.value = function(...args: any[]) {
       decoratorLogger.log(atLevel, {
-        func: `${new String(propertyKey)}()`,
+        func: `${String(propertyKey)}()`,
         clazz: parent,
         msg: 'inOut -->',
         args,
@@ -31,7 +31,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
 
       if ((typeof result === 'function' || typeof result === 'object') && typeof result.then === 'function') {
         decoratorLogger.log(atLevel, {
-          func: `${new String(propertyKey)}()`,
+          func: `${String(propertyKey)}()`,
           clazz: parent,
           msg: 'inOut -- promisified function',
           result,
@@ -41,7 +41,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
           result
             .then((resolvedValue: any) => {
               decoratorLogger.log(atLevel, {
-                func: `${new String(propertyKey)}()`,
+                func: `${String(propertyKey)}()`,
                 clazz: parent,
                 msg: 'inOut <--',
                 result: resolvedValue,
@@ -54,7 +54,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
         return newPromise;
       } else {
         decoratorLogger.log(atLevel, {
-          func: `${new String(propertyKey)}()`,
+          func: `${String(propertyKey)}()`,
           clazz: parent,
           msg: 'inOut <--',
           result,
