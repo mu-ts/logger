@@ -3,6 +3,7 @@ import { LoggerConfig } from './interfaces/LoggerConfig';
 import { LogLevelString } from './interfaces/LogLevelString';
 import { LoggerFactory } from './interfaces/LoggerFactory';
 import { LoggerFilter, ToRedact } from './interfaces/LoggerFilter';
+import { LoggerStatement } from './interfaces/LoggerStatement';
 import { LoggerService } from './LoggerService';
 import { inOut } from './decorators/inOut';
 import { duration } from './decorators/duration';
@@ -16,6 +17,7 @@ export {
   LoggerFactory,
   LoggerService,
   LoggerFilter,
+  LoggerStatement,
   ToRedact,
   inOut,
   duration,

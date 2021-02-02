@@ -245,7 +245,7 @@ export class ConsoleLogger implements Logger {
         if (typeof value === "object"
             || (typeof value !== "string" && typeof value !== "number")) return value;
 
-        let newValue = value;
+        let newValue: any = value;
         for (const filter of this.filters) {
           if (String(newValue).includes('REDACTED')) return newValue;
           /* Filter out redacted fields. */

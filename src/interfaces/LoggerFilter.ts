@@ -1,4 +1,4 @@
-export interface ToRedact { fieldName?: string, value?: string | number }
+export interface ToRedact { fieldName?: string, value?: any }
 
 /**
  * When implemented and provided to the LoggerService, will wrap around
