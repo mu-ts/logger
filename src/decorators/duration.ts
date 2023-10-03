@@ -21,7 +21,7 @@ export function duration() {
     const method = descriptor.value;
 
     descriptor.value = function(...args: any[]) {
-      decoratorLogger.start(`${new String(propertyKey)}`);
+      decoratorLogger.start(`${String(propertyKey)}`);
       let result: any = method.apply(this, args);
 
       /**
@@ -30,11 +30,11 @@ export function duration() {
        */
       if ((typeof result === 'function' || typeof result === 'object') && typeof result.then === 'function') {
         result = result.then((resolvedValue: any) => {
-          decoratorLogger.stop(`${new String(propertyKey)}`);
+          decoratorLogger.stop(`${String(propertyKey)}`);
           return resolvedValue;
         });
       } else {
-        decoratorLogger.stop(`${new String(propertyKey)}`);
+        decoratorLogger.stop(`${String(propertyKey)}`);
       }
 
       return result;

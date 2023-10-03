@@ -1,4 +1,4 @@
-import { LoggerStatement } from './LoggerStatement';
+export interface ToRedact { fieldName?: string, value?: any }
 
 /**
  * When implemented and provided to the LoggerService, will wrap around
@@ -6,5 +6,5 @@ import { LoggerStatement } from './LoggerStatement';
  * information.
  */
 export interface LoggerFilter {
-  filter(statement: LoggerStatement): void;
+  redact(toRedact: ToRedact): any;
 }
