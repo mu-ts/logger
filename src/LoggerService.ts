@@ -126,7 +126,7 @@ export class LoggerService {
 
       for (const config of configs) {
         const parts: string[] = config.split(' ');
-        this.defaultLevels[parts[0].toLowerCase()] = parts[1] as LogLevelString;
+        this.defaultLevels[parts[0]] = parts[1].toLowerCase() as LogLevelString;
       }
     }
 
