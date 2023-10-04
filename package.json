@@ -6,6 +6,9 @@
   "types": "./lib/index",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "build": "tsc -p .",
     "test": "nyc mocha -r ts-node/register spec/**/*.spec.ts",
