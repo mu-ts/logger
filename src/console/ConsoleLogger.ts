@@ -33,11 +33,7 @@ export class ConsoleLogger implements Logger {
   }
 
   public start(label: string): void {
-    try {
-      console.time(`${this.name}.${label}`);
-    } catch (error) {
-      console.warn('Error creating start timer.', error);
-    }
+    console.time(`${this.name}.${label}`);
   }
 
   public stop(label: string): void {
@@ -55,29 +51,29 @@ export class ConsoleLogger implements Logger {
   private get level() {
     return this._level;
   }
-
+  
   public getLevel(): LogLevelString {
     return this.level;
   }
 
   public isTrace() {
-    return this.level === 'trace';
+    return ['trace'].includes(this.level);
   }
 
   public isDebug() {
-    return ['debug', 'trace'].includes(this.level);
+    return ['trace', 'debug'].includes(this.level);
   }
 
   public isInfo() {
-    return ['info', 'debug', 'trace'].includes(this.level);
+    return ['trace', 'debug', 'info'].includes(this.level);
   }
 
   public isWarn() {
-    return ['warn', 'info', 'debug', 'trace'].includes(this.level);
+    return ['trace', 'debug', 'info', 'warn'].includes(this.level);
   }
 
   public isError() {
-    return ['error', 'warn', 'info', 'debug', 'trace'].includes(this.level);
+    return ['trace', 'debug', 'info', 'warn', 'error'].includes(this.level);
   }
 
   public isFatal() {
