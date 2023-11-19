@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { SensitiveNameLoggerFilter } from '../../src/index';
+import { SensitiveNameLoggerFilter } from '../../src';
 
 describe('SensitiveNameLoggerFilter', () => {
   let filter: SensitiveNameLoggerFilter;

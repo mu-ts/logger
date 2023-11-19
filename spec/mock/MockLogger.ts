@@ -1,4 +1,4 @@
-import { Logger, LoggerFactory, LogLevelString, LoggerConfig } from '../../src/index';
+import { Logger, LoggerFactory, LogLevelString, LoggerConfig } from '../../src';
 import { MockLoggerStatement } from './MockLoggerStatement';
 
 export class MockLogger implements Logger {
@@ -9,7 +9,7 @@ export class MockLogger implements Logger {
 
   constructor(options: LoggerConfig, loggerFactory: LoggerFactory) {
     this.loggerFactory = loggerFactory;
-    if (!options.name) throw new Error('Name must be provied in the options for a new ConsoleLogger.');
+    if (!options.name) throw new Error('Name must be provide in the options for a new ConsoleLogger.');
     this.name = options.name;
     this.level = options.level || 'info';
     this.logStatements = [];

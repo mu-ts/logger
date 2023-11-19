@@ -1,20 +1,21 @@
-/* Reference: https://www.typescriptlang.org/docs/handbook/compiler-options.html */
 {
+  "compileOnSave": true,
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
-    "declaration": true,
     "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "lib": ["ES2016"],
-    "target": "ES2016",
-    "module": "commonjs",
-    "rootDir": "./src",
-    "outDir": "./lib",
-    "types": ["node"]
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
+    "outDir": "lib",
+    "baseUrl": "."
   },
-  "exclude": ["node_modules", "*.spec/**/*.spec.ts"],
-  "include": ["src/**/*"]
+  "include": [
+    "./src/**/***.ts"
+  ],
+  "exclude": [
+    "./spec/**/*",
+    "./node_modules/**/*"
+  ]
 }

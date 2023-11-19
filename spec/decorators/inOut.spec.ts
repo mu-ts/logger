@@ -1,7 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { inOut } from '../../src/decorators/inOut';
-import { LogLevelString, LoggerService } from '../../src/index';
+import { inOut, LogLevelString, LoggerService } from '../../src';
 import { MockLoggerFactory } from '../mock/MockLoggerFactory';
 import { MockLoggerStatement } from '../mock/MockLoggerStatement';
 import { MockLogger } from '../mock/MockLogger';

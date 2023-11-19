@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { LogLevelString, Logger } from '../../src/index';
+import { LogLevelString, Logger } from '../../src';
 import { ConsoleLoggerFactory } from '../../src/console/ConsoleLoggerFactory';
 
 describe('ConsoleLoggerFactory', () => {
@@ -27,7 +27,7 @@ describe('ConsoleLoggerFactory', () => {
     it('fails with no name', () => {
       expect(() => mockLoggerFactory.newLogger({})).to.throw(
         Error,
-        'Name must be provied in options, when calling newLogger().'
+        'Name must be provided in options, when calling newLogger().'
       );
     });
   });

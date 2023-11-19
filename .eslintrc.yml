@@ -2,13 +2,14 @@ parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: latest
   sourceType: module
-  tsconfigRootDir: __dirname
+  tsconfigRootDir: '.'
   project: "./tsconfig.json"
 ignorePatterns:
   - "/node_modules/**"
   - "/dist/**"
+  - "/lib/**"
   - "/coverage/**"
-  - "/.eslintrc.js"
+  - "/.eslintrc.yml"
   - "/spec/**"
 plugins:
   - security
@@ -49,10 +50,6 @@ rules:
       after: false
   no-shadow: "off"
   "@typescript-eslint/no-shadow": error
-  import/no-extraneous-dependencies:
-    - warn
-    - optionalDependencies: false
-      peerDependencies: false
 extends:
   - eslint:recommended
   - plugin:security/recommended

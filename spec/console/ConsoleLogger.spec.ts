@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { LoggerFilter, LoggerConfig, LoggerFactory, CreditCardLoggerFilter, LogLevelString } from '../../src/index';
+import { LoggerFilter, LoggerConfig, LoggerFactory, CreditCardLoggerFilter, LogLevelString } from '../../src';
 import { ConsoleLogger } from '../../src/console/ConsoleLogger';
 
 describe('ConsoleLogger', () => {
@@ -9,6 +9,7 @@ describe('ConsoleLogger', () => {
   let mockFactory: LoggerFactory;
   let mockFilters: LoggerFilter[];
   let consoleLogSpy: sinon.SinonSpy;
+  let consoleInfoSpy: sinon.SinonSpy;
   let consoleDebugSpy: sinon.SinonSpy;
   let consoleWarnSpy: sinon.SinonSpy;
   let consoleErrorSpy: sinon.SinonSpy;
@@ -32,6 +33,7 @@ describe('ConsoleLogger', () => {
     };
 
     consoleLogSpy = sinon.spy(console, 'log');
+    consoleInfoSpy = sinon.spy(console, 'info');
     consoleDebugSpy = sinon.spy(console, 'debug');
     consoleWarnSpy = sinon.spy(console, 'warn');
     consoleErrorSpy = sinon.spy(console, 'error');
@@ -40,6 +42,7 @@ describe('ConsoleLogger', () => {
 
   afterEach(() => {
     consoleLogSpy.restore();
+    consoleInfoSpy.restore();
     consoleDebugSpy.restore();
     consoleWarnSpy.restore();
     consoleErrorSpy.restore();
@@ -154,26 +157,26 @@ describe('ConsoleLogger', () => {
     });
     
     it('should log clazz', () => {
-      const response: any = (logger as any).toStatement('info', { clazz: 'SpecialClass' });
+      const response: any = (logger as unknown).toStatement('info', { clazz: 'SpecialClass' });
       expect(response.clazz).to.equal('SpecialClass');
     });
     
     it('should log error', () => {
-      let response: any = (logger as any).toStatement('info', new Error('Big problem'));
+      let response: any = (logger as unknown).toStatement('info', new Error('Big problem'));
       expect(response.err.type).to.equal('Error');
       
-      response = (logger as any).toStatement('info', new Error('Big problem'), new Error('Big problem2'));
+      response = (logger as unknown).toStatement('info', new Error('Big problem'), new Error('Big problem2'));
       expect(response.errs).to.not.be.undefined;
       
     });
 
     it('should log function', () => {
-      const response: any = (logger as any).toStatement('info', { func: 'specialFunc()' });
+      const response: any = (logger as unknown).toStatement('info', { func: 'specialFunc()' });
       expect(response.func).to.equal('specialFunc()');
     });
 
     it('should log msg', () => {
-      const response: any = (logger as any).toStatement('info', { msg: 'special msg' });
+      const response: any = (logger as unknown).toStatement('info', { msg: 'special msg' });
       expect(response.msg).to.equal('special msg');
     });
   });

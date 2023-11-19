@@ -1,4 +1,4 @@
-import { LogLevelString, LoggerFilter, LoggerConfig, Logger, LoggerFactory } from './index';
+import { Logger, LoggerConfig, LoggerFactory, LoggerFilter, LogLevelString } from './index';
 import { DefaultLevels } from './interfaces/DefaultLevels';
 import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
 
@@ -9,18 +9,20 @@ import { ConsoleLoggerFactory } from './console/ConsoleLoggerFactory';
  */
 export class LoggerService {
   private static readonly DEFAULT_LEVEL_NAME: string = 'default_level';
-  private static cache: { [key: string]: Logger } = {};
-  private static defaultLevels: DefaultLevels | undefined;
-  private static loggerFactory: LoggerFactory | undefined;
-  private static filters?: LoggerFilter[] | undefined;
 
-  private constructor() {}
+  private static cache: Record<string, Logger> = {};
+
+  private static defaultLevels: DefaultLevels | undefined;
+
+  private static loggerFactory: LoggerFactory | undefined;
+
+  private static filters?: LoggerFilter[] | undefined;
 
   /**
    *
    * @param filter will look at the value, attributes or contents of a statement and
    *               remove or replace (redact) it. This is used to avoid leaking sensitive
-   *               data like passwords, credit cards or sercets.
+   *               data like passwords, credit cards or secrets.
    */
   public static registerFilter(filter: LoggerFilter): void {
     if (!this.filters) this.filters = [];
@@ -62,7 +64,7 @@ export class LoggerService {
    */
   public static named(_options: string | LoggerConfig, filters?: LoggerFilter[]): Logger {
     const options: LoggerConfig = typeof _options === 'string' ? { name: _options } : _options;
-    const name: string = options.name;
+    const { name } = options;
 
     if (!name) {
       throw new Error('A named logger requires a name as a part of the LoggerConfig.');
@@ -77,7 +79,7 @@ export class LoggerService {
      * if a level is not hard coded. If, an environment value is provided with an
      * exclamation point on the name, then override.
      */
-    let level: LogLevelString | undefined = options.level;
+    let { level } = options;
 
     if (defaultLevels[`!${safeName}`]) level = defaultLevels[`!${safeName}`];
     if (!level && defaultLevels[safeName]) level = defaultLevels[safeName];
@@ -125,8 +127,8 @@ export class LoggerService {
       };
 
       for (const config of configs) {
-        const parts: string[] = config.split(' ');
-        this.defaultLevels[parts[0]] = parts[1].toLowerCase() as LogLevelString;
+        const [_levelName, _levelType]: string[] = config.split(' ');
+        this.defaultLevels[_levelName] = _levelType?.toLowerCase() as LogLevelString;
       }
     }
 

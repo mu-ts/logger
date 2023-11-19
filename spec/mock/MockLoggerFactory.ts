@@ -1,4 +1,4 @@
-import { LoggerFactory, LoggerConfig, Logger } from '../../src/index';
+import { LoggerFactory, LoggerConfig, Logger } from '../../src';
 import { MockLogger } from './MockLogger';
 
 export class MockLoggerFactory implements LoggerFactory {
