@@ -1,6 +1,6 @@
 {
   "compileOnSave": true,
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
     "noImplicitAny": true,
@@ -12,7 +12,7 @@
     "baseUrl": "."
   },
   "include": [
-    "./src/**/***.ts"
+    "./src/**/*.ts"
   ],
   "exclude": [
     "./spec/**/*",
