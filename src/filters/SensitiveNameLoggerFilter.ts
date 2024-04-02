@@ -7,6 +7,7 @@ import { LoggerFilter, ToRedact } from '../index';
  */
 export class SensitiveNameLoggerFilter implements LoggerFilter {
   private readonly replaceValue: string = '>>> REDACTED <<<';
+
   private readonly dangerousFieldNames: Set<string> = new Set([
     'account number',
     'account-number',
@@ -48,8 +49,7 @@ export class SensitiveNameLoggerFilter implements LoggerFilter {
     'sharedsecret',
   ]);
 
-  public redact(toRedact: ToRedact): any {
-    const { fieldName, value } = toRedact as ToRedact;
-    return (this.dangerousFieldNames.has(fieldName.toLocaleLowerCase())) ? this.replaceValue : value;
+  public redact({ fieldName, value }: ToRedact): unknown {
+    return (fieldName && this.dangerousFieldNames.has(fieldName.toLocaleLowerCase())) ? this.replaceValue : value;
   }
 }

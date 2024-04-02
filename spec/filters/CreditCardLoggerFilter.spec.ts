@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import { CreditCardLoggerFilter } from '../../src/index';
+import { CreditCardLoggerFilter } from '../../src';
 
 describe('CreditCardLoggerFilter', () => {
   let filter: CreditCardLoggerFilter;

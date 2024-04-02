@@ -1,26 +1,28 @@
-import { Logger, LogLevelString, LoggerFactory, LoggerFilter } from '../index';
+import { Logger, LoggerFactory, LoggerFilter, LogLevelString } from '../index';
 import { LoggerConfig } from '../interfaces/LoggerConfig';
 import { LoggerStatement } from '../interfaces/LoggerStatement';
 
 export class ConsoleLogger implements Logger {
-  private readonly name: string;
-  private readonly loggerFactory: LoggerFactory;
-  private readonly adornments: { [key: string]: string } | undefined;
   private _level: LogLevelString;
-  private filters: LoggerFilter[] | undefined;
+  
+  private readonly name: string;
 
-  constructor(options: LoggerConfig, loggerFactory: LoggerFactory, filters?: LoggerFilter[]) {
-    this.loggerFactory = loggerFactory;
-    if (!options.name) throw new Error('Name must be provided in the options for a new ConsoleLogger.');
-    this.name = options.name;
-    this.level = options.level || 'info';
-    this.adornments = options.adornments;
-    this.filters = filters;
+  private readonly adornments?: Record<string, string>;
+
+  constructor(
+    { name, level = 'info', adornments }: LoggerConfig,
+    private readonly loggerFactory: LoggerFactory,
+    private readonly filters?: LoggerFilter[]
+  ) {
+    if (!name) throw new Error('Name must be provided in the options for a new ConsoleLogger.');
+    this.name = name;
+    this.level = level;
+    this.adornments = adornments;
   }
 
   /**
    *
-   * @param options to create the child logger with. If only a string is provided the
+   * @param _options to create the child logger with. If only a string is provided the
    *        parents logging level is used.
    */
   public child(_options: string | LoggerConfig): Logger {
@@ -51,7 +53,7 @@ export class ConsoleLogger implements Logger {
   private get level() {
     return this._level;
   }
-  
+
   public getLevel(): LogLevelString {
     return this.level;
   }
@@ -80,34 +82,34 @@ export class ConsoleLogger implements Logger {
     return true;
   }
 
-  public trace(...params: Error | string | any) {
+  public trace(...params: unknown[]) {
     this.log('trace', ...params);
   }
 
-  public debug(...params: Error | string | any) {
+  public debug(...params: unknown[]) {
     this.log('debug', ...params);
   }
 
-  public info(...params: Error | string | any) {
+  public info(...params: unknown[]) {
     this.log('info', ...params);
   }
 
-  public warn(...params: Error | string | any) {
+  public warn(...params: unknown[]) {
     this.log('warn', ...params);
   }
 
-  public error(...params: Error | string | any) {
+  public error(...params: unknown[]) {
     this.log('error', ...params);
   }
 
-  public fatal(...params: Error | string | any) {
+  public fatal(...params: unknown[]) {
     this.log('fatal', ...params);
   }
 
-  public log(level: LogLevelString, ...params: Error | string | any): void {
+  public log(level: LogLevelString, ...params: unknown[]): void {
     /**
      * Statements are not created until a logging statement is
-     * actually requested to avoid unnecssary work.
+     * actually requested to avoid unnecessary work.
      */
     switch (level) {
       case 'trace':
@@ -136,36 +138,37 @@ export class ConsoleLogger implements Logger {
    *
    * @param params to format into a log statement.
    */
-  private toStatement(level: LogLevelString, ...params: Error | string | any): LoggerStatement {
+  private toStatement(level: LogLevelString, ...params: unknown[]): LoggerStatement {
     const statement: LoggerStatement = params
-      .filter((param: Error | string | any) => param !== undefined)
-      .reduce((accumulator: LoggerStatement, param: Error | string | any): LoggerStatement => {
+      .filter((param: unknown) => param !== undefined)
+      .reduce((accumulator: LoggerStatement, param: unknown): LoggerStatement => {
+
         if (!accumulator.at) accumulator.at = new Date();
 
         if (!accumulator.clazz) {
-          if (typeof param !== 'string' && param.clazz) {
-            accumulator.clazz = `${param.clazz}`;
+          if (typeof param !== 'string' && (param as LoggerStatement).clazz) {
+            accumulator.clazz = `${(param as LoggerStatement).clazz}`;
           }
         }
 
         if (!accumulator.func) {
           if (typeof param === 'string' && param.endsWith('()')) accumulator.func = param;
-          else if (param.func) {
-            accumulator.func = `${param.func}`;
+          else if ((param as LoggerStatement).func) {
+            accumulator.func = `${(param as LoggerStatement).func}`;
           }
         }
 
         if (!accumulator.msg) {
           if (typeof param === 'string' && !param.endsWith('()')) accumulator.msg = param;
-          else if (param.msg) {
-            accumulator.msg = `${param.msg}`;
-          } else if (param.message) {
-            accumulator.msg = `${param.message}`;
+          else if ((param as LoggerStatement).msg) {
+            accumulator.msg = `${(param as LoggerStatement).msg}`;
+          } else if ((param as Error).message) {
+            accumulator.msg = `${(param as Error).message}`;
           }
         }
 
         if (param instanceof Error) {
-          const anError = {
+          const anError: Error = {
             ...{
               type: param.constructor.name,
               message: param.message,
@@ -180,7 +183,7 @@ export class ConsoleLogger implements Logger {
           } else if (accumulator.errs) {
             accumulator.errs.push(anError);
           }
-        } else if (typeof param === 'object') {
+        } else if (param && typeof param === 'object') {
           if (!accumulator.data) accumulator.data = {};
           const name: string = param.constructor.name;
           if (name === 'Object') accumulator.data = { ...accumulator.data, ...param };
@@ -190,7 +193,7 @@ export class ConsoleLogger implements Logger {
         }
 
         return accumulator;
-      }, {});
+      }, {} as LoggerStatement);
 
     statement.name = this.name;
     statement.level = level;
@@ -199,12 +202,12 @@ export class ConsoleLogger implements Logger {
      * Force attributes on the statement output, that are defined as adornments to the logging
      * statement. This violates the LoggerStatement interface, by design, as the interface is
      * defined as the 'standard' LoggerStatement and adornments are there as static values
-     * to attach to each statement as an additional marker. I dont want to explicitly open
+     * to attach to each statement as an additional marker. I don't want to explicitly open
      * up the LoggerStatement interface to allow any possible value, as it will become a
      * meaningless interface.
      */
     if (this.adornments) {
-      Object.keys(this.adornments).forEach((key: string) => ((statement as any)[key] = this.adornments[key]));
+      Object.keys(this.adornments).forEach((key: string) => ((statement as any)[key] = this.adornments?.[key]));
     }
 
     if (statement.data || statement.msg) {
@@ -212,25 +215,22 @@ export class ConsoleLogger implements Logger {
        * If a deep clone is not done of the objects then there is a risk of
        * modifying a logged object during filtering of logged out data.
        */
-      if (statement.data) statement.data = this.deepCopy(statement.data);
+      if (statement.data) statement.data = this.deepCopy(statement.data) as Record<string, unknown>;
       // if (this.filters) this.filters.forEach((filter: LoggerFilter) => filter.filter(statement));
     }
-
-    const { clazz, name, func, msg, data, at, ...rest } = statement;
-    return { clazz, name, func, msg, data, ...rest, at }; // re-order output for readability
+    return this.readableOutput(statement); // re-order output for readability
   }
 
   /**
    *
    * @param target to create a clone of.
    */
-  private deepCopy(target: any): any {
+  private deepCopy(target: unknown): unknown {
     /**
-     * This is pretty heavy handed. We can update this to a more efficient
+     * This is pretty heavy-handed. We can update this to a more efficient
      * algorithm if a performance issue is located with it.
      */
-
-    return JSON.parse(this.serialize<{[key: string]: any }>(target));
+    return JSON.parse(this.serialize<Record<string, unknown>>(target as Record<string, unknown>));
   }
 
   private serialize<T>(object: T): string {
@@ -238,8 +238,8 @@ export class ConsoleLogger implements Logger {
       object,
       (name: string, value: any) => {
         if (!this.filters) return value;
-        if (typeof value === "object"
-            || (typeof value !== "string" && typeof value !== "number")) return value;
+        if (typeof value === 'object'
+            || (typeof value !== 'string' && typeof value !== 'number')) return value;
 
         let newValue: any = value;
         for (const filter of this.filters) {
@@ -249,12 +249,21 @@ export class ConsoleLogger implements Logger {
         }
         return newValue;
       },
-      undefined
+      undefined,
     );
     return serialized;
   }
 
   private static toString(statement: LoggerStatement): string {
     return JSON.stringify(statement, null, 2);
+  }
+
+  private readableOutput(statement: LoggerStatement) {
+    const {
+      clazz, name, func, msg, data, at, ...rest
+    } = statement;
+    return {
+      clazz, name, func, msg, data, ...rest, at,
+    }; // re-order output for readability
   }
 }

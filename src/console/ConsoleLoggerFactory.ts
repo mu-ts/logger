@@ -1,4 +1,4 @@
-import { LoggerConfig, LoggerFactory, Logger, LoggerFilter } from '../index';
+import { Logger, LoggerConfig, LoggerFactory, LoggerFilter } from '../index';
 import { ConsoleLogger } from './ConsoleLogger';
 
 /**
@@ -7,7 +7,7 @@ import { ConsoleLogger } from './ConsoleLogger';
  */
 export class ConsoleLoggerFactory implements LoggerFactory {
   public newLogger(options: LoggerConfig, filters?: LoggerFilter[]): Logger {
-    if (!options.name) throw new Error('Name must be provied in options, when calling newLogger().');
+    if (!options.name) throw new Error('Name must be provided in options, when calling newLogger().');
     return new ConsoleLogger(options, this, filters);
   }
 }

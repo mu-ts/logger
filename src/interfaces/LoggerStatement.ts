@@ -9,5 +9,5 @@ export interface LoggerStatement {
   msg?: string;
   err?: Error;
   errs?: Error[];
-  data?: { [key: string]: any };
+  data?: Record<string, unknown>;
 }

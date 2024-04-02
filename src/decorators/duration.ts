@@ -1,4 +1,4 @@
-import { LoggerService, Logger, LoggerConfig } from '../index';
+import { Logger, LoggerConfig, LoggerService } from '../index';
 
 /**
  * Prints out the amount of time a function takes to execute.
@@ -11,7 +11,6 @@ import { LoggerService, Logger, LoggerConfig } from '../index';
  * one is found, it is used, otherwise a logger is created under the name
  * of the parent.
  *
- * @param configuration of this inOut logging statement.
  */
 export function duration() {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
@@ -20,7 +19,7 @@ export function duration() {
     const decoratorLogger: Logger = LoggerService.named(logConfig);
     const method = descriptor.value;
 
-    descriptor.value = function(...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       decoratorLogger.start(`${String(propertyKey)}`);
       let result: any = method.apply(this, args);
 

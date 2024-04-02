@@ -4,7 +4,7 @@ import { LoggerConfig } from './LoggerConfig';
 /**
  * Each logger instance should be created via the LoggerService using 'named'. The value
  * for 'named' will determine the optional `process.env.LOG_LEVEL` that can be provided
- * to change the level for a specific logger, rather than having to programatically
+ * to change the level for a specific logger, rather than having to programmatically
  * define the level for each individual logger.
  *
  * For example:
@@ -14,7 +14,7 @@ import { LoggerConfig } from './LoggerConfig';
  * const otherLogger: Logger = LoggerService.named('my.other')
  *
  * In the case of the two loggers above, each has a name associated to them, and use
- * the default default logging level defined ('info').
+ * the default logging level defined ('info').
  *
  * I can change the logging level of 'my.other' by adding another statement to the
  * LOG_LEVEL environment variable. The example below changes 'my.other' logging level
@@ -32,7 +32,7 @@ export interface Logger {
    * See the '@duration()` decorator for easier execution of this functionality.
    *
    * @param label of the time tracker.
-   * @return the time in nannoseconds
+   * @return the time in nanoseconds
    */
   start(label: string): void;
 
@@ -51,7 +51,7 @@ export interface Logger {
 
   /**
    *
-   * @param level to set the logget to.
+   * @param level to set the log get to.
    */
   setLevel(level: LogLevelString): void;
 
@@ -62,8 +62,9 @@ export interface Logger {
 
   /**
    * Creates a child instance from this logger. Depending on the underlying implementation
-   * it will attempt to keep track of, and report, the heirarchy of this logger.
+   * it will attempt to keep track of, and report, the hierarchy of this logger.
    *
+   * @param name
    * @param options to set on each logger statement.
    */
   child(name: string, options?: LoggerConfig): Logger;
@@ -78,7 +79,7 @@ export interface Logger {
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  trace(...params: Error | string | any): void;
+  trace(...params: unknown[]): void;
 
   /**
    * Returns a boolean: is the `debug` level enabled?
@@ -86,11 +87,11 @@ export interface Logger {
   isDebug(): boolean;
 
   /**
-   * Second lowest level, will only show if trace or debug is enabled for this logger.
+   * Second-lowest level, will only show if trace or debug is enabled for this logger.
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  debug(...params: Error | string | any): void;
+  debug(...params: unknown[]): void;
 
   /**
    * Returns a boolean: is the `info` level enabled?
@@ -102,7 +103,7 @@ export interface Logger {
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  info(...params: Error | string | any): void;
+  info(...params: unknown[]): void;
 
   /**
    * Returns a boolean: is the `warn` level enabled?
@@ -110,13 +111,13 @@ export interface Logger {
   isWarn(): boolean;
 
   /**
-   * 4th tier logging, so will only show if warn, info, trace or debug are enabled. This level
+   * 4th tier logging, so will only show if 'warn', 'info', 'trace' or 'debug' are enabled. This level
    * of logging statements output to the console under the `.warn` level if it is available
    * as it is with the default console logger.
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  warn(...params: Error | string | any): void;
+  warn(...params: unknown[]): void;
 
   /**
    * Returns a boolean: is the `error` level enabled?
@@ -130,7 +131,7 @@ export interface Logger {
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  error(...params: Error | string | any): void;
+  error(...params: unknown[]): void;
 
   /**
    * Returns a boolean: is the `fatal` level enabled.
@@ -138,12 +139,12 @@ export interface Logger {
   isFatal(): boolean;
 
   /**
-   * Highest teir of logging that always shows. Statements are printed out with higher
+   * Highest tier of logging that always shows. Statements are printed out with higher
    * urgency. Meaning, for the default logger `console.error` is used instead of `console.log`.
    *
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  fatal(...params: Error | string | any): void;
+  fatal(...params: unknown[]): void;
 
   /**
    * Logs a statement out at the level specified. The rules specified in the documentation for
@@ -152,5 +153,5 @@ export interface Logger {
    * @param level to log this statement out at.
    * @param params Any collection of string, errors or objects to be printed to the console.
    */
-  log(level: LogLevelString, ...params: Error | string | any): void;
+  log(level: LogLevelString, ...params: unknown[]): void;
 }

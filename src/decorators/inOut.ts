@@ -1,4 +1,4 @@
-import { LoggerConfig, Logger, LoggerService, LogLevelString } from '../index';
+import { Logger, LoggerConfig, LoggerService, LogLevelString } from '../index';
 
 /**
  * Adds input and output 'debug' statements for a function when it is executed. Uses
@@ -9,7 +9,7 @@ import { LoggerConfig, Logger, LoggerService, LogLevelString } from '../index';
  * one is found, it is used, otherwise a logger is created under the name
  * of the parent.
  *
- * @param configuration of this inOut logging statement.
+ * @param config of this inOut logging statement.
  */
 export function inOut(config?: { atLevel?: LogLevelString }) {
   return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
@@ -19,7 +19,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
     const decoratorLogger: Logger = LoggerService.named(logConfig);
     const method = descriptor.value;
 
-    descriptor.value = function(...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       decoratorLogger.log(atLevel, {
         func: `${String(propertyKey)}()`,
         clazz: parent,
@@ -27,9 +27,9 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
         args,
       });
 
-      let result: any | Promise<any> = method.apply(this, args);
+      const result: unknown = method.apply(this, args);
 
-      if ((typeof result === 'function' || typeof result === 'object') && typeof result.then === 'function') {
+      if ((typeof result === 'function' || typeof result === 'object') && typeof (result as Promise<unknown>).then === 'function') {
         decoratorLogger.log(atLevel, {
           func: `${String(propertyKey)}()`,
           clazz: parent,
@@ -38,8 +38,7 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
         });
 
         const newPromise: Promise<any> = new Promise((resolve, reject) => {
-          result
-            .then((resolvedValue: any) => {
+          (result as Promise<unknown>).then((resolvedValue: any) => {
               decoratorLogger.log(atLevel, {
                 func: `${String(propertyKey)}()`,
                 clazz: parent,
@@ -52,15 +51,14 @@ export function inOut(config?: { atLevel?: LogLevelString }) {
         });
 
         return newPromise;
-      } else {
-        decoratorLogger.log(atLevel, {
-          func: `${String(propertyKey)}()`,
-          clazz: parent,
-          msg: 'inOut <--',
-          result,
-        });
-        return result;
       }
+      decoratorLogger.log(atLevel, {
+        func: `${String(propertyKey)}()`,
+        clazz: parent,
+        msg: 'inOut <--',
+        result,
+      });
+      return result;
     };
 
     return descriptor;

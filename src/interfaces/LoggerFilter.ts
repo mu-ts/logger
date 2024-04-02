@@ -1,4 +1,4 @@
-export interface ToRedact { fieldName?: string, value?: any }
+export interface ToRedact { fieldName?: string, value?: unknown }
 
 /**
  * When implemented and provided to the LoggerService, will wrap around
@@ -6,5 +6,5 @@ export interface ToRedact { fieldName?: string, value?: any }
  * information.
  */
 export interface LoggerFilter {
-  redact(toRedact: ToRedact): any;
+  redact(toRedact: ToRedact): unknown;
 }
