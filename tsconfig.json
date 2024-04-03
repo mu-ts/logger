@@ -3,6 +3,8 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
+    "declaration": true,
+    "declarationDir": "./lib",
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "removeComments": true,
@@ -11,11 +13,6 @@
     "outDir": "lib",
     "baseUrl": "."
   },
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "./spec/**/*",
-    "./node_modules/**/*"
-  ]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./spec/**/*", "./node_modules/**/*"]
 }

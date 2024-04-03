@@ -1,9 +1,9 @@
 {
   "name": "@mu-ts/logger",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Simple, lightweight and extendable logging.",
   "main": "./lib/index.js",
-  "types": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "author": "matt.filion@gmail.com",
   "homepage": "https://github.com/mu-ts/logger#readme",
   "engines": {
